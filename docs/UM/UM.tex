@@ -1,0 +1,254 @@
+\documentclass{article}
+
+\usepackage[right=1in,left=1in,top=1in,bottom=1in]{geometry}
+
+\usepackage{mhchem}
+
+\usepackage{xcolor}
+
+\usepackage{blkarray}
+
+\usepackage{amsmath}
+
+\usepackage{amsfonts}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\usetikzlibrary{arrows, decorations.markings}
+\usetikzlibrary{positioning}
+
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1.0cm, text centered, draw=black, fill=lightgray]
+\tikzstyle{process} = [rectangle, minimum width=6cm, minimum height=1.0cm, text width = 5cm, text centered, draw=black, fill=lightgray]
+\tikzstyle{decision} = [diamond, minimum width=2cm, minimum height=1cm, text width = 3cm, text centered, draw=black, fill=lightgray]
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, text width = 3cm, minimum height=1cm, text centered, draw=black, fill=lightgray]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\usepackage{amsmath}
+
+\numberwithin{equation}{section}
+
+\usepackage{listings}
+
+%Create the color for the code background
+\definecolor{light-gray}{gray}{0.85}
+
+% This makes a listing environment for input templates 
+
+\lstnewenvironment{lt}
+{
+    \lstset{
+        basicstyle=\ttfamily,
+        backgroundcolor=\color{light-gray},
+        emph={action, ader_neg_adens, ader_trans_iter, burn, cnd, cnt, cont, control, conditions, dir, disc, feed, feed_and_remv, form, frac, from, group, grp, grp2, isos, keyword, kmax, kmin, mass, mat, max, min, mols, omp, opt, oxi, oxidation, pres, prop, reac, redox, rem, remv, rhow, rng, rto, set, spec_stream, stream, streams, sum, to, transfers, type, val, vol, weight},
+        emphstyle=\underbar,
+    }
+}{}
+
+% This makes a listing environment for input examples
+\lstnewenvironment{li}
+{
+    \lstset{
+        basicstyle=\bfseries\color{white},
+        backgroundcolor=\color{black},
+    }
+}{}
+
+\begin{document}
+
+\title{ADER: Advanced Depletion Extension for Reprocessing\\
+\vspace{10pt}\large{Ver: 1.0 - A SERPENT2 Extension}\\
+\vspace{10pt}\large{User Manual}}
+
+\author{
+    Daniel D. Wooten
+}
+
+\clearpage
+\maketitle
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\section{Preface}\label{sec:pref}
+This document is intended for users of SERPENT2 wishing to utilize the
+\textbf{A}dvanced \textbf{D}epletion \textbf{E}Extension for
+\textbf{R}eprocessing ( ADER ) extension.
+\textbf{This manual assumes the reader is proficient with SERPENT2.}
+General information about SERPENT2 can be found at the SERPENT2
+wiki: 
+\begin{lstlisting}[breaklines, backgroundcolor=\color{white}]{website}
+serpent.vtt.ft/mediawiki/index.php/Main_Page
+\end{lstlisting}
+
+With regards to citing SERPENT2 and ADER, as stated on the SERPENT2 wiki general
+reference to SERPENT2 may be provided by - J. Leppanen, M. Pusa, T. Vittanen,
+V. Valtavirta, T. Kaltiaisenaho. \textit{``The Serpent Monte Carlo code: Status,
+development, and applications in 2013"}. Ann. Nucl. Energy, \textbf{82} (2015)
+142 - 150. Reference to ADER may be provided by - D. D. Wooten. \textit{ADER -
+Advanced Depletion Extension for Reprocessing}. (2019).
+
+ADER makes extensive use of the open-source library, Clp, part of the COIN-OR
+collection of packages. Supporting documentation and the source code
+for Clp can be found at: 
+\begin{lstlisting}[breaklines, backgroundcolor=\color{white}]{website}
+https://github.com/coin-or/Clp
+\end{lstlisting}
+Of importance is that Clp is distributed under
+the Eclipse Public Licence which is not a copy-left licence but a rather
+forgiving open-source licence. Instructions for installing and linking the
+Clp libraries can be found in section \ref{sec:install}.
+
+\noindent Examples of SERPENT2 input are given 
+\begin{lt}
+in this font
+\end{lt}
+SERPENT2 and ADER keywords, user inputs which must be a certain word, 
+appear underlined as seen below. \textbf{Keywords not enclosed in brackets
+must appear in the position of the entry they are seen in. Keywords enclosed in
+brackets may appear anywhere after this opening keyword but must be followed
+by their input value if they have one.}
+\begin{lt}
+keyword
+\end{lt}
+The following list of symbols are not to be considered ``input". Rather, they
+are delimiters for this manual and should not be considered part of any ADER
+commands or inputs\ldots
+\begin{lt}
+[ ] { } < > ( ) ; ...
+\end{lt}
+Required user inputs are denoted\ldots
+\begin{lt}
+[This_entry_is_set_by_the_user]
+\end{lt}
+Optional user inputs are denoted\ldots 
+\begin{lt}
+<This_entry_may_be_excluded>
+\end{lt}
+Required user choices from a list are denoted\ldots
+\begin{lt}
+[{option_1; option_2}]
+\end{lt}
+Optional user choices from a list are denoted\ldots
+\begin{lt} 
+<{option_1; option_2}>
+\end{lt}
+User inputs which are required \textit{if} a previous input was given are 
+denoted\ldots
+\begin{lt}
+<optional_input> (required_input_due_to_earlier_input)
+\end{lt}
+If an example of a user input includes a structure such as\ldots
+\begin{lt}
+[Entry_1] [some_number]
+...
+<Entry_n> (some_number)
+\end{lt}
+This indicates that at least one instance of \texttt{Entry x} must be input by
+the user but as many instances of type \texttt{Entry x} may be input by the
+user. Additionally the presence of the second bracketed input indicates that
+each instance of \texttt{Entry x} requires an entry of \texttt{some\_number}.
+Examples of generic SERPENT2 input, input templates, are given in a light-gray
+box with black mono-spaced font such as the example seen below\ldots
+
+\begin{lt}
+mat [mat_name] [mat_den] <{vol,mass}> [mat_val] <burn> (burn_segments) 
+[isotope_1_zai].[temp_lib] [iso_frac]
+<isotope_n_zai>.(temp_lib) (iso_frac)
+\end{lt}
+
+While any specific use examples, implementations of SERPENT2 input, are given
+in a black box with white mono-spaced font such as the example seen below\ldots
+
+\begin{li}
+mat water -1.0 vol 1.0 burn 0.0
+1001.06c    2
+...
+1608.06c    1
+\end{li}
+
+\section{Introduction}\label{sec:intro}
+
+\textit{Please be sure to read the preface for important information.}\\
+In the most direct sense ADER seeks to accomplish two tasks: 
+determining an  optimal  material  composition  given  a  set  
+of  constraints,  and  integrating the necessary composition adjustments 
+into a nuclear material evolution model.
+ADER brings to Serpent 2 the ability to define groups of elements,
+isotopes, and chemicals; the ability to define relationships between these 
+groups; and the ability to move these groups into, out-of, and between 
+materials. Furthermore, ADER provides the ability to set
+$k_{eff}$ targets, to prescribe mass transfers within a given system, and to set
+weighted oxidation state targets for materials. Bringing all of these
+capabilities together ADER employs the COIN-OR linear optimization (CLP) 
+package to determine the material flows, as  set by the user, 
+that will best satisfy an optimization target, also set by the user. 
+Sufficiently simplified - ADER is a material-composition, linear-optimization
+engine for the SERPENT2 burnup routines. 
+
+This manual serves as both a reference for the theory of ADER and as a guide to
+its usage. As such each section has a ``Quick Reference" subsection where
+direct and simplified answers to common usage questions and input formatting
+can be found. However, many users will find that a deeper understanding of the
+theory behind ADER, as well as the nuances of its use, will serve them well. 
+This manual is organized to be red through in a linear fashion by a first time
+user beginning with the concept of a ``group" as it is used in ADER and
+building up the ADER toolkit from there.
+
+To provide context for the explanation of the components of ADER components of
+an example simulation are built up throughout this manual. These components only
+serve as rough examples.
+That said, for this example consider a fuel salt for
+a liquid fuel molten salt reactor composed of \ce{LiF} salt at 71.7
+mol-fraction, \ce{BeF2} salt at 16 mol-fraction,
+\ce{UF3} at 0.023 mol-fraction, \ce{UF4} at 2.277 mol-fraction, 
+and \ce{ThF4} at 10 mol-fraction. Take this salt to have
+an initial neutron multiplication factor of $1.0$ ( it does not in reality )
+and to be in an infinite lattice with a graphite moderator which takes up 50\%
+of the volume. The SERPENT2 material based off this example is shown below.
+\textbf{The keyword ``ader" must be included in the definition line of any 
+material which is to be managed by the ADER extensions to SERPENT2 - i.e. the
+material is either connected to a stream or to a conditions block.} ADER input
+is entered as a ``regular" component of SERPENT2 input files.
+
+\begin{li}
+mat FuelSalt -2.805 vol 1 burn 0 ader
+3006.06c    0.00028
+3007.06c    0.28323
+4009.06c    0.06328
+9019.06c    0.60450
+90232.06c   0.03954
+92233.06c   0.00046
+92238.06c   0.00864
+\end{li}
+
+\section{Groups}\label{sec:groups}
+\input{groups}
+
+\section{Conditions Blocks}\label{sec:conditions_blocks}
+\input{conditions_blocks}
+
+\section{Streams}\label{sec:streams}
+\input{streams}
+
+\section{Criticality Control}\label{sec:criticality_control}
+\input{criticality_control}
+
+\section{Output}\label{sec:output}
+\input{output}
+
+\section{Testing}\label{sec:test}
+\input{test}
+
+\section{Parallel Computation}\label{sec:parallel}
+\input{parallel}
+
+\section{General Notes}\label{sec:general_notes}
+\input{general_notes}
+
+\section{Theory}\label{sec:theory}
+\input{theory}
+
+\section{Installation}\label{sec:install}
+\input{install.tex}
+
+\end{document}

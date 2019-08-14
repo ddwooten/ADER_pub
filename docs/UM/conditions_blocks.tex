@@ -1,0 +1,427 @@
+A conditions block is the structure through which limits on a SERPENT2 material
+are defined. A conditions block consists of, minimally, the elements seen 
+below where \texttt{conditions} is the keyword and \texttt{Name} is the unique
+identifier given to this specific conditions block.
+
+\begin{lt}
+conditions [Name]
+\end{lt}
+
+Consider this conditions block \texttt{limits\_block} as defined below.
+
+\begin{li}
+conditions limits_block
+\end{li}
+
+A conditions block, and all of the limitations it may carry, are applied to
+SERPENT2 materials by including the key and value pair, \texttt{cnd [Name]}, in
+the material's definition; the information that follows the \texttt{mat}
+keyword.
+
+\begin{lt}
+... [cnd] [Name] ...
+\end{lt}
+
+Building upon the example presented in the introduction, to attach a
+conditions block with the name of \texttt{limits\_block} the material definition
+line would be amended to look like\ldots
+
+\begin{li}
+mat -2.805 FuelSalt vol 1 burn 0 ader cnd limits_block
+\end{li}
+
+The same conditions block can be attached to multiple materials with
+each material receiving its own unique set of the limitations - this reduces
+input duplication.
+To add limitations to a conditions block there exist six possibilities: 
+ranges, ratios, control tables, oxidation tables, preservation options, and 
+optimization options. Each will be covered below in the following subsections.
+
+\subsection{Ranges}\label{ssec:ranges}
+Using the \texttt{rng} keyword the fraction of a material,
+by percent atom per cubic centimeter ($\frac{\%}{cm^{3}}$) which must adhere
+to the recipe of a specific group may be set. This fraction may be either a
+single value, seen in method A, or a range of values, as seen in method B.
+Values less than 0 are not accepted but there is no upper limit for the 
+material fractions. Using a group in a \texttt{rng} structure which is attached
+to a material via a condition block is one of two methods to ``attach" a group
+to a material - the meaning of this is expanded upon in section 
+\ref{ssec:control}
+
+\noindent Method A:
+
+\begin{lt}
+rng [grp_name] val [value]
+\end{lt}
+
+\noindent Method B:
+
+\begin{lt}
+rng [grp_name] [min] [min_value] [max] [max_value]
+\end{lt}
+
+Take $g_{u}$ to be the fraction of a material's atomic density which is 
+attributed to group $u$, in which case method A sets up the relation seen in
+equation \ref{eq:rng_ma} and method B sets up the relation seen in equation
+\ref{eq:rng_mb}.
+
+
+\begin{equation}\label{eq:rng_ma}
+g_{u} = \text{\texttt{[value]}}
+\end{equation}
+
+\begin{equation}\label{eq:rng_mb}
+\text{\texttt{[min\_value]}} \leq g_{u} \leq \text{\texttt{[max\_value]}}
+\end{equation}
+
+Now consider the conditions block shown below which was attached to the
+material \texttt{FuelSalt} at the beginning of this section, 
+\ref{sec:conditions_blocks}.
+
+\begin{li}
+conditions limits_block
+rng gUF4    min 0.03    max 0.10
+\end{li}
+
+By adding a \texttt{rng} input to the conditions block \texttt{limits\_block}
+material \texttt{FuelSalt} is now required to have at least 3\% and no more 
+than 10\%
+of its atomic density accounted for by isotopes which would fit the recipe
+of group \texttt{gUF4}. Furthermore, these isotopes may not be counted towards
+inclusion in any other group structure attached to the material
+\texttt{FuelSalt}.
+
+\subsection{Ratios}\label{ssec:ratios}
+The keyword \texttt{rto} is used to describe the permitted relative abundance
+of groups within a material. Like \texttt{rng} structures \texttt{rto} entries
+can be make according to methods A or B seen below. Values equal to or less than
+0 are not accepted. 
+Using a group in a \texttt{rng} structure which is attached
+to a material via a condition block is one of two methods to ``attach" a group
+to a material - the meaning of this is expanded upon in section 
+\ref{ssec:control}
+
+\noindent Method A:
+\begin{lt}
+rto [grp1_name] [val] [value] [grp2] [grp_2_name]
+\end{lt}
+
+\noindent Method B:
+\begin{lt}
+rto [grp1_name] [min] [min_value] [max] [max_value] [grp2] [grp_2_name]
+\end{lt}
+
+Method A sets up the relation seen in
+equation \ref{eq:rto_ma} and method B sets up the relation seen in equation
+\ref{eq:rto_mb}.
+
+\begin{equation}\label{eq:rto_ma}
+\frac{g_{1}}{g_{2}} = \text{\texttt{[value]}}
+\end{equation}
+
+\begin{equation}\label{eq:rto_mb}
+\text{\texttt{[min\_value]}} \leq \frac{g_{1}}{g_{2}} \leq \text{\texttt{[max\_value]}}
+\end{equation}
+
+Now, consider adding the following line to the conditions block,
+\texttt{limits\_block}, which has served as the example throughout this section.
+
+\begin{li}
+conditions limits_block
+rng gUF4    min 0.03    max 0.10
+rto gFLiBe  min 4.0 max 99  grp2    gUF
+\end{li}
+
+This \texttt{rto} line specifies that in the material \texttt{FuelSalt} the
+fraction of the material's atomic density which is accounted for by the
+group \texttt{gFLiBe} must be no less than 4 times as prevalent and no more
+than 99 times as prevalent as the fraction of the material's atomic density
+which is accounted for by the group \texttt{gUF} - which is a summation group.
+
+\subsection{Control Tables}\label{ssec:control}
+In the ADER framework there is no requirement that all of a material's atomic
+density be accounted for by group structures - groups are permitted to
+occupy as little or as much of a material's composition as the optimal solution
+requires. Consider a group, \texttt{gNi}, which is defined as elemental 
+nickel and which is
+limited to be less than 2\% of a material's atomic density. One way to meet this
+requirement is simply to assign none of the nickel isotopes in the material to
+the group \texttt{gNi}. In that case 0\% of the material's atomic density is
+accounted for by the group \texttt{gNi}. 
+
+Control tables offer a means to prevent the trivial answer reached above. 
+A control table is a list of elements and isotopes. When attached to a material
+a control table specifies that any isotopes in the material which are listed
+on the control table, or which are a member of an element listed on the control
+table, must be fully accounted for by a group structure attached to the 
+material. Groups become attached to a material by being a component of an
+\texttt{rng} or \texttt{rto} entry in a conditions block which is assigned to
+the material in question. In the example above, if there are no other groups
+for the nickel isotopes to go into, if nickel is a controlled element in the 
+material in question, all of the nickel isotopes in the material would be
+forced into the \texttt{gNi} group. An element or isotope not listed on a
+control table is referred to as a ``free" element or isotope as these 
+constituents are not bound to be in groups.
+
+A control table is defined in the following manner where elements are denoted
+by their alphabetic periodic table designation and isotopes by adding a dash
+followed by the atomic number of the isotope in question to the alphabetic
+periodic table designation for the parent element: i.e. \texttt{U} for uranium
+and \texttt{U-233} for \ce{^233U}.
+
+\begin{lt}
+control [table_name]
+[element_or_isotope]
+...
+<additional_element_or_isotope>
+\end{lt}
+
+For example, consider a control table which specifies that all lithium,
+beryllium, \ce{^233U}, and thorium must be accounted for by group structures, as
+seen below.
+
+\begin{li}
+control c_table
+Li Be U-233 Th
+\end{li}
+
+A control table is attached to a conditions block via the entry\ldots
+
+\begin{lt}
+[cnt] [table_name]
+\end{lt}
+
+Attaching the control table, \texttt{c\_table}, from above to the conditions
+block used in this section is seen below.
+
+\begin{li}
+conditions limits_block
+rng gUF4    min 0.03    max 0.10
+rto gFLiBe  min 4.0 max 99  grp2    gUF
+cnt c_table
+\end{li}
+
+\subsection{Oxidation Tables}\label{ssec:oxidation}
+Oxidation tables are a means of setting a limitation on a weighted sum which
+is done over all the \textit{elements} in a material. Oxidation tables are
+constructed as seen below where \texttt{value} is multiplied by
+\texttt{weight\_value}, if applicable, which produces the weight in the weighted
+sum done over the elements which are enumerated in the oxidation table. Elements
+are entered by their alphabetic periodic table designation. Any real number
+is a valid input for both \texttt{value} and \texttt{weight\_value}.
+
+\begin{lt}
+oxidation [Name]
+[first_element] [value] <weight> (weight_value)
+<nth_element> (value) <weight> (weight_value)
+\end{lt}
+
+As an example consider the oxidation table \texttt{oxi\_table} defined below. 
+Any elements excluded from an oxidation table's list are given a default value
+of 0.
+
+\begin{li}
+oxidation oxi_table
+H   1
+O   -2
+\end{li}
+
+Oxidation tables are attached to conditions blocks either by method A or
+method B.
+
+\noindent Method A:
+
+\begin{lt}
+oxi [Name] val [target_val]
+\end{lt}
+
+\noindent Method B:
+
+\begin{lt}
+oxi [Name] [min] [min_val] [max] [max_val]
+\end{lt}
+
+Taking $\rho_{e}$ to be the fraction of a material's atomic density which is
+attributable to element $e$ an oxidation table, in conjunction with its
+implementation in a conditions block attached to said material, establishes 
+the relationships seen in equations \ref{eq:oxi_ma} and \ref{eq:oxi_mb} 
+corresponding to methods A and B respectively.
+
+\begin{equation}\label{eq:oxi_ma}
+\sum_{e}^{E} \rho_{e} v_{e} w_{e} = \text{\texttt{target\_val}}
+\end{equation}
+
+\begin{equation}\label{eq:oxi_mb}
+\text{\texttt{min\_val}} \leq \sum_{e}^{E} \rho_{e} v_{e} w_{e} \leq 
+\text{\texttt{max\_val}}
+\end{equation}
+
+Attaching the oxidation table \texttt{oxi\_table} to the conditions block
+used throughout this section is demonstrated below using method B.
+
+\begin{li}
+conditions limits_block
+rng gUF4    min 0.03    max 0.10
+rto gFLiBe  min 4.0 max 99  grp2    gUF
+cnt c_table
+oxi oxi_table min -0.02 max 0.06
+\end{li}
+
+\subsection{Preservation}\label{ssec:pres}
+Inclusion of the following keyword pair\ldots
+
+\begin{lt}
+pres mols
+\end{lt}
+
+into a conditions block adds the limitation to the material that any influx
+of matter must be equally balanced by a removal of matter with an equal number
+of atoms; i.e. the atomic density of a material is not permitted to change due
+to mass flows - only nuclear depletion effects. Only mass flows managed by
+group-class streams, covered in section \ref{sec:streams}, are included in
+this balance. The majority of simulations will
+find this option to be necessary; otherwise unintended behavior may result. 
+
+Including this modifier into the conditions block used throughout this section
+is seen below.
+
+\begin{li}
+conditions limits_block
+rng gUF4    min 0.03    max 0.10
+rto gFLiBe  min 4.0 max 99  grp2    gUF
+cnt c_table
+oxi oxi_table min -0.02 max 0.06
+pres mols
+\end{li}
+
+\subsection{Optimization}\label{ssec:optimization}
+As ADER is a linear optimization suite, there must be an optimization target.
+Every material cluster, a concept covered in section \ref{sec:streams}, with
+at least one group-class stream, must have one and only one optimization
+target. Optimization targets are attached to material clusters via a conditions
+block which is attached to a member of a material cluster. There are nine
+methods to set optimization targets. The direction of optimization, maximization
+or minimization, is set in the optimization entry of the conditions table
+as well. Many of the optimization targets involve concepts related to streams
+which are covered in section \ref{sec:streams}.
+
+\noindent Method A sets the optimization target as the total value of all
+feed/reac/redox/remv type streams:
+
+\begin{lt}
+opt [dir] [{min; max}] [type] [action] {[feed; reac; redox; remv]} 
+\end{lt}
+
+\noindent Method B sets the optimization target as the total value of all 
+feed and remv type streams:
+
+\begin{lt}
+opt [dir] [{min; max}] [type] [action] [feed_and_remv] 
+\end{lt}
+
+\noindent Method C sets the optimization target as the total value of all 
+streams: 
+
+\begin{lt}
+opt [dir] [{min; max}] [type] [action] [streams] 
+\end{lt}
+
+\noindent Method D sets the optimization target as the total value of all 
+streams which have a valid SERPENT2 material for both the source and sink:
+
+\begin{lt}
+opt [dir] [{min; max}] [type] [action] [transfers]
+\end{lt}
+
+\noindent Method E sets the optimization target as the total fraction of a
+material's atomic density which is attributed to the named group. This group
+\textit{must} have been assigned to a material in the material cluster via
+either a \texttt{rng} or \texttt{rto} conditions block entry.
+
+\begin{lt}
+opt [dir] [{min; max}] [type] [group] [group_name]
+\end{lt}
+
+\noindent Method F sets the optimization target as the total value of all
+group-class streams defined using the group of name \texttt{group\_name}.
+\begin{lt}
+opt [dir] [{min; max}] [type] [spec_stream] [group_name]
+\end{lt}
+
+As an example the optimization target of minimizing all feed type streams is
+added to the conditions block used throughout this section.
+
+\begin{li}
+conditions limits_block
+rng gUF4    min 0.03    max 0.10
+rto gFLiBe  min 4.0 max 99  grp2    gUF
+cnt c_table
+oxi oxi_table min -0.02 max 0.06
+pres mols
+opt dir min type action feed
+\end{li}
+
+\subsection{Quick Reference}\label{ssec:conditions_blocks_qr}
+\begin{itemize}
+\item{Conditions blocks are defined as follows\ldots
+\begin{lt}
+conditions [Name]
+\end{lt}
+    }
+\item{Conditions blocks are attached to materials using the \texttt{cnd [Name]}
+key and value pair in a material's definition - i.e. 
+\texttt{mat my\_mat cnd my\_conditions\_block}
+    }
+\item{Ranges are defined inside a conditions block as follows\ldots
+\begin{lt}
+rng [grp_name] [{val; min/max}] [value] (max/min) (value)
+\end{lt}
+    }
+\item{Ratios are defined inside a conditions block as follows\ldots
+\begin{lt}
+rto [grp1_name] [{val; min/max}] [value] (max/min) (value) 
+    grp2 [grp2_name]
+\end{lt}
+    }
+\item{Control tables are defined as follows\ldots
+\begin{lt}
+control [table_name]
+[element_or_isotope]
+...
+<element_or_isotope>
+\end{lt}
+    }
+\item{Control tables are added to conditions blocks as follows\ldots
+\begin{lt}
+cnt [table_name]
+\end{lt}
+    }
+\item{Oxidation tables are defined as follows\ldots
+\begin{lt}
+oxidation [table_name]
+[element_x] [value] <weight> (weight_value)
+[element_n] [value] <weight> (weight_value)
+\end{lt}
+    }
+\item{Oxidation tables are added to conditions blocks as follows\ldots
+\begin{lt}
+oxi [table_name] [{val; min/max}] [value] (max/min) (value)
+\end{lt}
+    }
+\item{To turn on atom-density conservation for a material, add the following
+line to a conditions block attached to said material\ldots
+\begin{lt}
+pres mols
+\end{lt}
+    }
+\item{Every material cluster with one or more group-class streams must have
+one and only one \texttt{opt} entry attached to one of the conditions blocks
+which is itself attached to one of the materials in a cluster. \texttt{opt}
+entries are added to conditions blocks as follows\ldots
+\begin{lt}
+opt [dir] [{min; max}] [type] [{action; group; spec_stream}]
+    [{feed; feed_and_remv; reac; redox; remv; streams; 
+        transfers; group_name}]
+\end{lt}
+    }
+\end{itemize}

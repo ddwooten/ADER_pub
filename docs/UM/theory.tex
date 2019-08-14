@@ -1,0 +1,697 @@
+The details of ADER's computations and the theory behind its operation are
+laid out in this section.
+
+\subsection{Groups}\label{theory_groups}
+Take $F_{e|u}$ to be the input values given for each element, $e$, in a group,
+$u$. Take $F_{i|e,u}$ to be the input value given for each isotope, $i$, as
+part of element $e$ in group $u$. The normalized equivalents, $f_{e,u}$ and
+$f_{i|e,k}$, are defined by equations \ref{eq:t_group_e} and \ref{eq:t_group_i}
+respectively. 
+
+\begin{equation}\label{eq:t_group_e}
+f_{e,u} = \frac{F_{e,u}}{\sum_{e}^{E} F_{e,u}}
+\end{equation}
+
+\begin{equation}\label{eq:t_group_i}
+f_{i|e,u} = \frac{F_{i|e,u}}{\sum_{i|e}^{I|e} F_{i|e,u}}
+\end{equation}
+
+Concerning the elements in groups which are not given an explicit isotopic
+composition, referred to as ``unfixed" elements - calculations in SERPENT2 are 
+ultimately done on an isotopic basis
+and so all elements must be composed of isotopes. Groups which are a part of a
+material's options list, see section \ref{sec:groups} for an explanation of this
+term, derive the isotopic compositions for their unfixed elements using the 
+isotopic composition of the same element in the host material. These
+$f_{i:e,u}$ values are derived as seen in equation \ref{eq:t_groups_unfixed}
+where $N_{i:e}$ is the number density of isotope $i$ of element $e$ in the 
+material of interest.
+
+\begin{equation}\label{eq:t_groups_unfixed}
+f_{i|e,u} = \frac{N_{i|e}}{\sum_{i|e}^{I|e} N_{i|e}}
+\end{equation}
+
+Take $f_{i,u}$ to be the normalized fraction of isotope $i$ in group $k$. These
+values are derived as seen in equation \ref{eq:t_group_I}.
+
+\begin{equation}\label{eq:t_group_I}
+f_{i,u} = f_{e,u}f_{i|e,u}
+\end{equation}
+
+Take $g_{u}$ to be the normalized fraction of a material's atomic density
+which is taken to ascribe to the recipe for group $u$ - that is, the isotopes
+composing this subset of the material density all have a normalized abundance of
+$f_{i,u}$ within the subset. For instance, consider the atomic density and 
+makeup of the material \texttt{FuelSalt} from section \ref{sec:intro} and
+consider the group \texttt{gFLiBe} from section \ref{sec:groups}. The $g_{u}$
+value for \texttt{gFLiBe} in the material \texttt{FuelSalt} could be said
+to be anywhere from zero to ~0.76.
+
+Take $E_{j}$ to be the number density of element $j$ in a material. Take
+$I_{k}$ to be the atomic density of isotope $i$ in a material. Take
+$\mu_{j}$ to be the portion of element $j$'s number density not attributed to
+group structures. Take $\mu_{k}$ to be the portion of isotope $k$'s atomic
+density which is not attributed to group structures. In the case of a
+``controlled" element or isotope, a concept covered in section 
+\ref{ssec:control}, the $\mu$ value would be zero. The relationships then
+seen in equations \ref{eq:t_groups_e_balance} and \ref{eq:t_groups_i_balance}
+may be established.
+
+\begin{equation}\label{eq:t_groups_e_balance}
+E_{j} = \mu_{j} + \sum_{u}^{U} g_{u}f_{e,u} 
+\end{equation}
+
+\begin{equation}\label{eq:t_groups_i_balance}
+I_{k} = \mu_{k} + \sum_{u}^{U} g_{u}f_{i,u} 
+\end{equation}
+
+In section \ref{ssec:ratios} the concept of a relative abundance constraint
+between two groups was developed. Equation \ref{eq:rto_mb} can be 
+expressed linearly as two inequalities as
+shown in equations \ref{eq:rto_min} and \ref{eq:rto_max} where $r_{m}$ is the
+input \texttt{min\_value} and $r_{M}$ is the input \texttt{max\_value}.
+
+\begin{equation}
+\label{eq:rto_min}
+-\infty \leq -g_{1} + r_{m}g_{2} \leq 0
+\end{equation}
+
+\begin{equation}
+\label{eq:rto_max}
+0 \leq -g_{1} + r_{M}g_{2} \leq \infty
+\end{equation}
+
+Summation groups, those groups defined according to method D in section 
+\ref{sec:groups}, have their $g_{k}$ values - denoted $g_{k:Y}$ - determined 
+according to equation \ref{eq:t_group_sum} where $g_{k|Y}$ is the $g_{k}$ 
+value for a group used in the definition of summation group $Y$ and $w_{k|Y}$
+is the weight value entered for group $k$ used in the definition of summation
+group $Y$. In section \ref{sec:groups} this value is shown as a mandatory input
+of ``\texttt{1}" though in reality it may take any value greater than 0 - but
+any value other than 1 may lead to a non-physical solution in the optimization
+problem. 
+
+\begin{equation}\label{eq:t_group_sum}
+g_{k:Y} = \sum_{k|Y}^{K|Y} g_{k|Y} w_{k|Y}
+\end{equation}
+
+\subsection{Group-class Streams}\label{ssec:t_streams}
+For group-class streams take $s_{v}$ to be the atomic density of this mass
+load where an ``atomic" unit is composed of isotopes in proportion to the
+$f_{k,u}$ values of the group, which are denoted $f_{k,v}$ for groups which
+are used to form streams. 
+
+Take $E_{j,\Delta}$ to be the number density of element $j$ in a given stream's
+mass load. Take $I_{k,\Delta}$ to be the atomic density of isotope $i$ in a 
+given stream's mass load. The relationships then seen in equations 
+\ref{eq:t_streams_e_balance} and \ref{eq:t_streams_i_balance} may be 
+established.
+
+\begin{equation}\label{eq:t_streams_e_balance}
+E_{j,\Delta} = s_{v}f_{e,v} 
+\end{equation}
+
+\begin{equation}\label{eq:t_streams_i_balance}
+I_{k,\Delta} = s_{v}f_{i,v} 
+\end{equation}
+
+Concerning the elements in streams which are not given an explicit isotopic
+composition, referred to as ``unfixed" elements - calculations in SERPENT2 are 
+ultimately done on an isotopic basis
+and so all elements must be composed of isotopes. Streams 
+derive the isotopic compositions for their unfixed elements using the 
+isotopic composition of the same element in the source material. These
+$f_{i|e,v}$ values are derived as seen in equation \ref{eq:t_streams_unfixed}
+where $N_{i|e}$ is the number density of isotope $i$ of element $e$ in the 
+source material of interest. Streams with unfixed elements and no SERPENT2
+material as a source are not permitted.
+
+\begin{equation}\label{eq:t_streams_unfixed}
+f_{i|e,v} = \frac{N_{i|e}}{\sum_{i|e}^{I|e} N_{i|e}}
+\end{equation}
+
+Summation streams, group-class streams constructed with summation
+groups have their $s_{v}$ values - denoted $s_{v:Y}$ - determined 
+according to equation \ref{eq:t_streams_sum} where $s_{v|Y}$ is the $s_{v}$ 
+value for a stream used in the definition of summation stream $Y$ and $q_{v|Y}$
+is the weight value entered for group $v$ used in the definition of summation
+stream $Y$. In section \ref{sec:groups} this value is shown as a mandatory input
+of ``\texttt{1}" though in reality it may take any value greater than 0 - but
+any value other than 1 may lead to a non-physical solution in the optimization
+problem. 
+
+\begin{equation}\label{eq:t_streams_sum}
+s_{v:Y} = \sum_{v|Y}^{V|Y} s_{v|Y}q_{v|Y}
+\end{equation}
+
+\subsection{Table-class Streams}\label{sssec:t_tables}
+The change in an isotope's, $i$, atomic density, $z_{i,v}$, induced by a 
+continuous or discrete table-class stream, $v$ is given by equation 
+\ref{eq:t_tables_z} where $q_{i,v}$ is the \texttt{table\_value} given for 
+isotope $i$ by the removal table used to create stream $v$, $N_{i}$ is the 
+number density for that isotope, and $r_{v}$ is the \texttt{frac\_value} given 
+for stream $v$.
+
+\begin{equation}\label{eq:t_tables_z}
+z_{i,v} = q_{i,v} r_{v} N_{i}
+\end{equation}
+
+The change in an isotope's, $i$, atomic density, $z_{i,v}$, induced by a 
+proportional table-class stream, $v$ is given by equation 
+\ref{eq:t_tables_zp} where $q_{i,v}$ is the \texttt{table\_value} given for 
+isotope $i$ by the removal table used to create stream $v$, $N_{i}$ is the 
+number density for that isotope, and $r_{v}$ is the \texttt{frac\_value} given 
+for stream $v$. If the proportional stream in question, $v$, has only a single
+valid SERPENT2 material as a sink, the sign of $q_{i,v}$ is positive. Otherwise,
+the sign of $q_{i,v}$ is negative. 
+
+\begin{equation}\label{eq:t_tables_zp}
+z_{i,v} = N_{i}e^{q_{i,v} r_{v} \Delta t}
+\end{equation}
+
+The total change in an isotope's, $i$, atomic density due to all 
+tale-class streams is denoted $r_{i}$ is given by equation
+\ref{eq:t_tables_r}. It should be noted, that when this summation involves
+values for a proportional stream the $r_{i}$ value becomes an approximation
+as the proportional stream will move more or less mass based on nuclear
+depletion and the action of other streams.
+
+\begin{equation}\label{eq:t_tables_r}
+r_{i} = \sum_{v}^{V} z_{i,v}
+\end{equation}
+
+There are of course $z_{e,v}$ and $r_{e}$ equivalents for elements as well.
+
+\subsection{Criticality Control}\label{ssec:t_crit}
+A weighted sum over isotopes in a material forms the reactivity constraint that
+may be applied. This constraint is derived from the expression for the 
+multiplication factor as found in Equation~\ref{eq:reac}:
+
+\begin{equation}
+\label{eq:reac}
+k_{eff} = P_{NL} \frac{\sum\limits^{M}_{m}\phi_m\omega_m\nu\Sigma_{f}^{m}}
+{\sum\limits^{M}_{m}\phi_m\omega_m   \Sigma_{a}^{m}}
+\end{equation}
+
+where $\phi_m$, $\omega_m$, $ \nu\Sigma_{f}^{m}$ and $ \Sigma_{a}^{m}$ are, 
+respectively, the scalar neutron flux, the volume fraction, the spectrum 
+averaged neutron production cross section, and the macroscopic absorption 
+cross section for each material $m$. $P_{NL}$ is the neutron non-leakage 
+probability. In ADER, the ability to control $k_{eff}$ is limited to the 
+case of a single neutron multiplying material; take $\nu\Sigma_{f}=0$ for 
+every material but the multiplying material $M$ and as such 
+Equation \ref{eq:reac} can be rewritten as follows:
+
+\begin{equation}
+\label{eq:reac_one_material}
+k_{eff} = P_{NL} \frac{\phi_M\omega_{M}\Sigma_{a}^{M}}{\sum\limits^{M}_{m}\phi_m
+\omega_m \Sigma_{a}^{m}} \frac{\nu\Sigma_{f}^{M}}{\Sigma_{a}^{M}}
+\end{equation}
+
+The probability of a neutron being absorbed in the multiplying material is 
+defined as follows:
+
+\begin{equation}
+\label{eq:abs_prob}
+P_{A} = P_{NL} \frac{\phi_M\omega_{M}\Sigma_{a}^{M}} {\sum\limits^{M-1}_{m}
+\phi_{m}\omega_m\Sigma_{a}^{m}}
+\end{equation}
+
+Then $k_{eff}$ can be calculated as:
+
+\begin{equation}
+\label{eq:reac_modified}
+k_{eff} = P_{A} \frac{\nu\Sigma_{f}^{M}}{\Sigma_{a}^{M}} = P_{A} 
+\frac{\sum\limits^{I}_{i}\nu\Sigma_{f}^{i}}{\sum\limits^{I}_{i}\Sigma_{a}^{i}}
+\end{equation}
+
+where $\nu\Sigma_{f}^i$, and $\Sigma_{a}^i$ are, respectively, the spectrum 
+averaged neutron production cross section, and the absorption cross 
+section for every isotope $i$ in the multiplying material $M$. 
+This relation is expected to hold for simulations in which there
+is a dominant reactive material and for which $\nu\Sigma_{f} \approx 0$ for 
+all other materials.
+
+In this case, given lower and upper bounds for the multiplication factor of 
+the system, $k_{eff}^{min}$ and $k_{eff}^{max}$ respectively, 
+Equation \ref{eq:reac_modified} can be made linear as in Equations 
+\ref{eq:k_min} and \ref{eq:k_max}.
+
+
+\begin{equation}
+\label{eq:k_min}
+0 \geq \frac{k_{eff}^{min}}{P_{A}} \sum \limits_{k}^{K} \sigma_{a}^{k} I_{k} 
+- \sum \limits_{k}^{K} \nu^{k} \sigma_{f}^{k} I_{k}
+\end{equation}
+
+\begin{equation}
+\label{eq:k_max}
+0 \leq \frac{k_{eff}^{max}}{P_{A}} \sum \limits_{k}^{K} \sigma_{a}^{k} I_{k} 
+- \sum \limits_{k}^{K} \nu^{k} \sigma_{f}^{k} I_{k}
+\end{equation}
+
+A key assumption of this linearization process is that 
+$\frac{\partial P_{A}(m...M)}{\partial M} = 0$ when in truth
+$P_{A}$ is a function of the composition of material $M$. The impacts of this 
+approximation are expected to be quite small but it will affect all 
+simulations, more so those with strong leakage effects.
+
+\subsection{Constructing the Optimization Problem}\label{ssec:t_construct}
+A discussion of the construction of the optimization problem would not be
+complete without a discussion of ADER's interactions with SERPENT2 and a view
+of the overall program flow. Figure \ref{fig:flowchart1} provides a simplified
+view of ADER's interactions with SERPENT and the overall simulation progression.
+In figure \ref{fig:flowchart2} the ``ADER Optimization" box from figure 
+\ref{fig:flowchart1} is expanded as a process into its own flowchart.
+
+\begin{figure}\label{fig:flowchart1}
+\caption{A simplified schematic of interactions between SERPENT2 and ADER.}
+\begin{centering}
+\begin{tikzpicture}[node distance = 1.5cm, every text node part/.style={font=\small}]
+\node (start) [startstop] {SERPENT2 Starts};
+\node (input) [io, below=0.5cm of start] {User input};
+\node (dec1) [decision, below=0.5cm of input] {Are there burnup steps remaining?};
+\node (first) [process, below=0.5cm of dec1] {Monte-Carlo transport sweep};
+\node (end) [startstop, right=0.5cm of dec1] {End};
+\node (ader_opt) [process, below=0.5cm of first] {ADER Optimization};
+\node (ader_burn) [process, below=0.5cm of ader_opt] {ADER Burnup};
+
+\draw [arrow] (start) -- (input);
+\draw [arrow] (input) -- (dec1);
+\draw [arrow] (dec1) -- (first);
+\draw [arrow] (dec1) -- node[anchor=west] {yes} (first);
+\draw [arrow] (dec1) -- (end);
+\draw [arrow] (dec1) -- node[anchor=north] {no} (end);
+\draw [arrow] (first) -- (ader_opt);
+\draw [arrow] (ader_opt) -- (ader_burn);
+\draw [arrow] (ader_burn) -- ([shift={(-2cm,0cm)}]ader_burn.west) |- ([shift={(-2cm,0cm)}]dec1.west) -- (dec1);
+\end{tikzpicture}
+\end{centering}
+\end{figure}
+
+\begin{figure}\label{fig:flowchart2}
+\caption{A detailed look of the ``ADER Optimization" box from figure
+\ref{fig:flowchart1}. This diagram picks up at the entry to the ``ADER
+Optimization" box and exits out to the ``ADER Burnup" box also in figure
+\ref{fig:flowchart1}.}
+\begin{centering}
+\begin{tikzpicture}[node distance = 1.5cm, every text node part/.style={font=\small}]
+\node (ader_gather) [process] {ADER updates $f_{i,v}$ and $f_{i,u}$ values for 
+unfixed elements};
+\node (dec1) [decision, below=0.5cm of ader_gather] {Are there any group-class
+streams?};
+\node (ader_build) [process, below=0.5cm of dec1] {ADER builds the
+optimization problem};
+\node (clp) [process, below=0.5cm of ader_build] {ADER passes off the the
+optimization problem to CLP which returns a vector of solutions};
+\node (dec2) [decision, below=0.5cm of clp] {Is this the first criticality 
+iteration?};
+\node (rem) [process, right=1cm of dec2] {ADER collects $z_{i,v}$ values  and 
+applies the effects of any discrete table-class streams to material 
+compositions};
+\node (ader_apply) [process, below=0.5cm of dec2] {ADER apple's the effects of
+any discrete group-class streams to material compositions};
+\node (monte) [process, below=0.5cm of ader_apply] {Monte Carlo transport 
+sweep};
+\node (dec3) [decision, below=0.5cm of monte] {Is iteration count at maximum
+OR $k_{eff}^{min} \leq k_{eff}^{analog} \leq k_{efF}^{max}$?};
+\node (end) [startstop, right=1cm of dec3] {End};
+
+\draw [arrow] (ader_gather) -- (dec1);
+\draw [arrow] (dec1) -- (ader_build);
+\draw [arrow] (dec1) -- node[anchor=west] {yes} (ader_build);
+\draw [arrow] (dec1) -- node[anchor=north] {no} ([shift={(-2cm,0cm)}]dec1.west) |- ([shift={(-2cm,0cm)}]dec2.west) -- (dec2);
+\draw [arrow] (ader_build) -- (clp);
+\draw [arrow] (clp) -- (dec2);
+\draw [arrow] (dec2) -- (ader_apply);
+\draw [arrow] (dec2) -- node[anchor=west] {no} (ader_apply);
+\draw [arrow] (dec2) -- (rem);
+\draw [arrow] (dec2) -- node[anchor=north] {yes} (rem);
+\draw [arrow] (rem) -- (rem.south) |- ([shift={(1cm,0cm)}]ader_apply.east) -- (ader_apply);
+\draw [arrow] (ader_apply) -- (monte);
+\draw [arrow] (monte) -- (dec3);
+\draw [arrow] (dec3) -- (end);
+\draw [arrow] (dec3) -- node[anchor=north] {yes} (end);
+\draw [arrow] (dec3) -- node[anchor=north] {no} ([shift={(-3cm,0cm)}]dec3.west) |- ([shift={(-2cm,0cm)}]ader_gather.west) -- (ader_gather);
+\end{tikzpicture}
+\end{centering}
+\end{figure}
+
+In a SERPENT2 burnup simulation, following the initial Monte Carlo transport
+sweep done at the beginning of every burnup step, ADER enters its criticality
+search iterations - even if a criticality search has not been asked for. The
+default values for \texttt{kmin} and \texttt{kmax} will cause the criticality
+check to pass regardless.
+
+The first consequential action ADER takes in each iteration is to determine
+the $f_{i|e,u}$ and $f_{i|e,v}$ values for the isotopes of unfixed elements
+in groups and group-class streams. Following this assessment all of the
+$z_{i,v}$ values are calculated for table-class streams.
+
+This point marks the first major divergence of any ADER simulation.
+\textit{If and only if} the only streams entered by the user are table-class
+streams the simulation proceeds to the application of the effects of discrete
+form streams. There is no optimization process in this case because the user 
+has only given direct orders to ADER in the form of table-class streams, there 
+are no choices for ADER to make in the form of group-class streams. 
+
+In the case that at least one group-class stream, attached to a material, exists
+in the simulation, the simulation would then proceed to build and solve the
+optimization problem for each material cluster.
+
+The CLP library expects a linear programming matrix from ADER.
+Figure \ref{fig:opt_matrix}
+depicts the scheme for constructing the linear programming matrix. Column bounds
+are presented above the appropriate column whereas row bounds are presented to 
+the left of the appropriate row. Below the column bounds are the variables which
+the columns represent and to the right of the row bounds are the equation
+number, if any, of the equation that row is modeled after. 
+For the sake of brevity
+the matrix in Figure~\ref{fig:opt_matrix} is for one material only though many
+materials may be involved in such a matrix should they be linked together
+by shared mass transfers. In which case the only variables shared between 
+materials in the same material cluster are the
+group-class streams and the stream equations they are a part of are the only
+coupling equations; aside from transfers by table-class streams but those
+are only represented in the linear programming matrix, they are handled by
+other routines all together. If a second material were to be included in this
+matrix then, perhaps, the stream entries in the fourth, fifth, and sixth 
+columns would have non-zero coefficients for some $E_{j}^{d}$ and $I_{k}^{d}$ 
+rows of the second material. The coefficients used for the construction of these
+matrices are normalized to the atomic density from the beginning of the
+optimization process for the host material.
+
+Working down the matrix row by row the first row encountered represents
+equation \ref{eq:rto_min} with arbitrary groups $g_{1}$ and $g_{2}$ whereas 
+the next row 
+down represents equation \ref{eq:rto_max}. The third row, what will be referred
+to as an elemental future row represents the atom balance for element $j$ where
+$f{e_{j}^{u}}$ is the fractional proportion of element $j$ in group $u$.
+The novel column involved here is an elemental future column whose inclusion
+in the same row closes the equation where an ``elemental future value",
+$E_{j}^{f}$, is the fraction of a material's atomic density ( relative to
+the density at the beginning of the step ) that is taken up by element $e_{j}$.
+The bounds for this row are those for a
+free element, a concept covered in section \ref{ssec:control}, 
+those elements which are permitted to have portions
+of the element not tied up in declared group structures. In the case of a
+controlled element, those who's complete abundance must be accounted for by
+group structures, the lower bound is changed to zero. 
+The fourth row, an elemental
+delta row, represents the change in the abundance of element $j$,
+$E_{j}^{d}$, as caused by all group-class streams where
+$f{e_{j}^{v}}$ is the fractional proportion of element $j$ in stream $v$. 
+Of course the elemental delta column 
+is involved to close the balance. The fifth row, or balance row, is what ties
+together $E_{j}^{f}$ and $E_{j}^{d}$. The bounds, $\alpha$ and $\beta$,
+are equal and represent $E_{j}^{c} + r_{e_{j}}$ constituting an element 
+balance ``in time” where $E_{j}^{c}$ represents the present fractional
+abundance of element $j$. The fifth row requires, straightforwardly, that the
+future amount of an element be equal to the current amount plus any delta,
+or change, in the element's abundance. The sixth row is an isotopic balance row
+requiring that the abundance of an element be equal to the abundance of its
+constituent isotopes. 
+The following three rows, the seventh, eighth, and ninth,
+are the isotopic versions of the elemental future, delta, and balance rows 
+where $f$ values are for the isotopic fractional proportions.
+$\gamma$ and $\delta$ are
+equal and represent $I_{k}^{c} + r_{i}$ where $I_{k}^{c}$ represents
+the present fractional abundance of isotope $k$. In the tenth and eleventh rows
+Equations \ref{eq:k_max} and \ref{eq:k_min} find representation with $\eta$
+and $\theta$ respectively representing terms of the expanded sum found in the
+referenced equations; $\frac{k_{eff}^{min}}{P_{A}} \sigma_{a}^{k} - \nu^{k}
+\sigma_{f}^{k}$ and
+$\frac{k_{eff}^{max}}{P_{A}} \sigma_{a}^{k} - \nu^{k}
+\sigma_{f}^{k}$. 
+The twelfth row represents equation \ref{eq:oxi_mb}, accounting for the
+contributions of the future quantity of an element to a material's averaged
+oxidation state (or however the weighted sum is interpreted).
+The thirteenth row, or Pres row, exists
+when the user instructs ADER to balance inflows with outflows as discussed
+in section \ref{ssec:pres}. The
+pres row requires that the net stream transfers in a material come to zero. The
+effects of table-class streams are captured in $\upsilon$ and $\omega$ as seen
+in equation \ref{eq:upsilon_bound}.
+The fourteenth row represents a closure for a group defined with method D from
+section \ref{sec:groups}; a summation group. In this case the summation group
+is $g_{3}$ which was defined as follows\ldots
+
+\begin{li}
+grp g3 sum
+g1  w1 
+g2  w2
+\end{li}
+
+The fifteenth row represents a closure relationship for a summation stream,
+a group-class stream built using a summation group. In this case the summation
+stream is $s_{3}$.
+The final row is the optimization, or Opt row. This row
+indicates to the simplex routine which variables to minimize or maximize. In
+figure \ref{fig:opt_matrix} the opt row is indicating that $g_{1}$ is the
+optimization target.
+
+\begin{equation}\label{eq:upsilon_bound}
+\upsilon = \omega = \sum_{i}^{I} r_{i}
+\end{equation}
+
+    \begin{equation*}
+    \label{fig:opt_matrix}
+        \centering
+        \begin{blockarray}{cccccccccccc}
+                               &                   & [b_{m},b_{M}]  &[0, \infty)
+           &[0, \infty)        &[0,\infty)         & [0,\infty)     &[0, \infty)
+           &[0, \infty)        &(-\infty,\infty)         & [0,\infty)     &
+            (-\infty0,\infty)  \\ 
+                               &                   & g_{1}          &g_{2}
+            &g_{3}             & s_{1}             & s_{2}          &s_{3}
+            &E_{j}^{f}         & E_{j}^{d}         & I_{k}^{f}      &
+            I_{k}^{d} \\
+                               &                   &                &
+            &                  &                   &                &
+            &                  &                   &                &
+             \\ 
+            \begin{block}{cc[cccccccccc]}
+             {(-\infty,0]}     & \text{Eq.}\ref{eq:rto_min} & -1    &r_{m}
+            &                  &                   &                &
+            &                  &                   &                &
+             \\
+             {[0,\infty)}      & \text{Eq.}\ref{eq:rto_max} & -1    &r_{M}
+            &                  &                   &                &
+            &                  &                   &                &
+             \\
+             {(-\infty,0]}     & E_{j}^{f}         & f_{e_{j}^{1}}  &f_{e_{j}^{2}}
+            &                  &                   &                   &
+            &-1                &                   &                   &
+             \\
+            {[0,0]}            & E_{j}^{d}         &                   &
+            &                  & f_{e_{j}^{1}}     & f_{e_{j}^{2}}     &
+            &                  & -1                &                   &
+             \\
+            {[\alpha, \beta]} 
+                               & E_{j}^{b}         &                   &
+            &                  &                   &                   &
+            &1                 & -1                &                   &
+             \\
+            {[0,0]}            & E_{j}^{i}         &                   &
+            &                  &                   &                   &
+            &-1                &                   & 1                 &
+             \\
+            {(-\infty,0]}      & I_{k}^{f}         & f_{i_{k}^{1}} &f_{i_{k}^{2}}
+            &                  &                   &                   &
+            &                  &                   & -1                &
+             \\
+            {[0,0]}            & I_{k}^{d}         &                   &
+            &                  & f_{i_{k}^{1}}     & f_{i_{k}^{2}}     &
+            &                  &                   &                   &
+            -1 \\
+            {[\gamma, \delta]}
+                               & I_{k}^{b}         &                   &
+            &                  &                   &                   &
+            &                  &                   & 1                 &
+            -1 \\ 
+            {[0, \infty)}      & \text{Eq.}\ref{eq:k_max}&             &
+            &                  &                   &                   &
+            &                  &                   & \eta              &
+             \\
+            {(-\infty, 0]}     & \text{Eq.}\ref{eq:k_min} &            &
+            &                  &                   &                   &
+            &                  &                   & \theta            & 
+             \\
+            {[O_{m},O_{M}]}    & \text{Eq.}\ref{eq:oxi_mb} &           &
+            &                  &                   &                   &
+            &v_{e}w_{e}        &                   &                   &
+             \\
+            {[\upsilon,\omega]} & \text{Pres}      &                   &
+            &                  & 1                 & 1                 &
+            &                  &                   &                   &
+             \\
+             {[0,0]}           & \text{Eq.}\ref{eq:t_group_sum} & -w_{1|3} &-w_{2|3}
+            &1                 &                   &                &
+            &                  &                   &                &
+             \\
+             {[0,0]}           & \text{Eq.}\ref{eq:t_streams_sum} &  &
+            &                  &-q_{1|3}           &-q_{2|3}        &1
+            &                 &                   &                &
+             \\
+                               & \text{Opt}        & 1                 &
+            &                  &                   &                   &
+            &                  &                   &                   &
+             \\
+            \end{block}
+        \end{blockarray}
+    \end{equation*}
+
+\subsection{Solving the Optimization Problem}\label{ssec:clp}
+Once the matrix seen in figure \ref{fig:opt_matrix} has been constructed by ADER
+it is converted into a dense column-major format and passed off to the CLP 
+library which solves this matrix as a simplex problem. CLP then returns a
+vector containing the atomic density of each group in a material, normalized to
+the material's density at the beginning of the optimization process. This
+vector also contains all the group-class mass load values needed to bring
+the material cluster to the optimal state. If the simulation is in the first
+criticality search iteration for a burnup step, the actions of all discrete 
+form streams,both group-class and table-class, are applied to materials. If the
+simulation is past the first criticality search iteration for the current
+burnup step only the actions of discrete group-class streams are applied to
+materials. Following these actions a Monte Carlo transport sweep is run with
+all the same cycle and batch parameters as specified by the user in the
+SERPENT2 input files. At this point, if the system $k_{eff}^{analog}$ is within
+the bounds as set by the user (or the default bounds) or if the criticality
+search has already used up all of its iterations, the simulation progresses
+on to the burnup calculation. If not, another criticality search iteration is
+launched starting with the determination of the isotopic composition for
+all unfixed elements in groups and group-class streams.
+
+\subsection{Nuclear Burnup Calculations}\label{ssec:burn}
+ADER's burnup routine rides along the iteration scheme employed by the SERPENT2
+burnup routine. That is to say that ADER is compatible with any burnup
+correction scheme that the user employs through SEREPNT2. In truth, the only
+affect that a burnup iteration scheme has on ADER is to change the cross
+sections used in any criticality control rows in the optimization matrices.
+ADER extends the burnup capabilities of SERPENT2 to include the effects
+of both group and table-class streams.
+The coefficients in the burnup
+matrix are those from the Bateman equation as seen in equation
+\ref{eq:Bateman} for the one energy group and zero 
+dimensionality case, where $N$ is the number density of nuclide $n$,
+$t$ is time, $b_{m \to n}$ is the branching ratio for the decay of 
+nuclide $m$ into $n$, $\lambda$ is the decay constant
+for its sub-scripted nuclide,
+$q$ goes over all neutron induced absorption reactions for a given isotope, 
+$a_{m \to n}^{q}$ is the branching ratio for isotope $m$ into $n$ due to
+reaction $q$, $\sigma_{x}^{y}$ is the effective microscopic
+cross section of reaction $x$ for isotope $y$, $\phi$ is the
+scalar neutron flux, $d$ denotes all
+transmutation reactions for a given isotope, $R_{n}(t)$ is a
+fractional removal (or addition) rate for isotope $n$ at
+time $t$, and $F_{n}(t)$ is a feed (or removal) amount for isotope
+$n$ at time $t$. These last two terms in equation \ref{eq:Bateman}
+account for proportional and continuous form streams
+respectively.
+
+A highly truncated burnup scheme can be
+seen in figure \ref{fig:burn_matrix} in which there are two isotopes,
+\ce{^{233}U} and \ce{^{135}Xe}, and two streams; $S_{c}$ representing a
+continuous stream with a constant injection rate and $S_{p}$ representing a
+proportional stream with a transfer rate dependent upon the concentration
+of the substances to be transferred. There are, of course, two matrices as well.
+The burnup matrix to the left holding the coefficients of the Bateman equation
+and the second, to the right, holding the initial concentrations of isotopes
+and the values for the streams. The first column of the first row gives
+the creation and destruction of \ce{^{233}U} which is dependant on the
+concentration of \ce{^{233}U} with $\Gamma$ representing nuclear destruction as
+seen in equation \ref{eq:Gamma_def}. The third column of the first row holds
+the fraction of stream $S_{c}$ that \ce{^{233}U} comprises. These entries
+together describe the evolution of \ce{^{233}U} in the given system. In the
+second row $\Xi$, as seen in equation \ref{eq:Xi_def}, represents the production
+of \ce{^{135}Xe} from \ce{^{233}U}. In the second column of the second row are
+the processes dependant on the concentration of \ce{^{135}Xe}. $\Upsilon$
+represents the proportional rate constant as determined by the multiplication
+of $q_{i,v}$ and $r_{v}$ whereas $\Theta$ is given by equation 
+\ref{eq:Theta_def}. The third row is blank as the abundance of a continuous type
+stream, $c_{n}$, does not change over a burn step. The fourth row is an
+addition specific to ADER and not found in the Bateman equations; rather, this
+line, and the lines it represents, exists to keep track of the amount of an
+isotope that a proportional stream moves simply to provide this information
+to the user. The system of matrices seen in figure \ref{fig:burn_matrix} is
+solved by SERPENT2 using the CRAM methodology providing updated isotopic
+abundances and proportional stream transfer amounts.
+
+    \begin{equation}
+    \label{eq:Bateman}
+    \begin{split}
+        \frac{\mathrm{d}N_{n}(t)}{\mathrm{d}t} = & \sum \limits_{m}^{M} 
+        b_{m \rightarrow n} \lambda_{j} N_{j}(t) + \\
+        & \sum \limits_{m}^{M}
+        \sum \limits_{q}^{Q} a_{m \rightarrow n}^{q}
+        \sigma_{q}^{k} \phi(t) N_{k}(t) - \\
+        & N_{n}(t) \lambda_{i} - \sum \limits_{d}^{D}
+        \sigma_{d}^{n} \phi(t) N_{n}(t) - \\
+        & R_{n}(t) N_{n}(t) + F_{n}(t)
+    \end{split}
+    \end{equation}
+
+    \begin{equation}
+    \label{fig:burn_matrix}
+        \begin{blockarray}{cccccc}
+             &
+            \ce{^{233}U} &
+            \ce{^{135}Xe} &
+            S_{c} &
+            S_{p} &
+            \mathbb{N} \\
+             &
+             &
+             &
+             &
+             &
+             \\ 
+        \begin{block}{c[cccc][c]}
+            \ce{^{233}U} &
+            -\lambda_{\ce{^{233}U}} + \Gamma &
+             &
+            f^{S_{c}}_{\ce{^{233}U}} &
+             &
+            N_{\ce{^{233}U}} \\
+            \ce{^{135}Xe} &
+            \Xi &
+            -\lambda_{\ce{^{135}Xe}} + \Upsilon + \Theta &
+             &
+             &
+            N_{\ce{^{135}Xe}} \\
+            S_{c} &
+             &
+             &
+             &
+             &
+            c_{n}\\
+            S_{p} &
+             &
+             \Upsilon &
+             &
+             &
+             0\\
+        \end{block}
+        \end{blockarray}
+    \end{equation}
+
+\begin{equation}
+\label{eq:Gamma_def}
+\Gamma = - \sum \limits_{d}^{D} \sigma_{d}^{\ce{^{233}U}} \phi
+\end{equation}
+
+\begin{equation}
+\label{eq:Xi_def}
+\Xi = b_{\ce{^{233}U} \rightarrow \ce{^{135}Xe}} \lambda_{\ce{^{233}U}} + \sum
+\limits_{q}^{Q} a_{\ce{^{233}U} \rightarrow \ce{^{135}Xe}} \sigma_{q}^{
+\ce{^{233}U}} \phi
+\end{equation}
+
+\begin{equation}
+\label{eq:Theta_def}
+\Theta =-\sum \limits_{d}^{D} \sigma_{d}^{\ce{^{135}Xe}} \phi
+\end{equation}
+
+Following the solution of the burnup problem the material compositions are
+updated accordingly and the simulation moves on to the next burnup step.
+

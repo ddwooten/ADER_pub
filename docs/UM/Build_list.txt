@@ -1,0 +1,686 @@
+aderaddclustermember.o: aderaddclustermember.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderaddclustermember.c
+
+aderallocateclpmemory.o: aderallocateclpmemory.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderallocateclpmemory.c
+
+aderaveragevalue.o: aderaveragevalue.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderaveragevalue.c
+
+aderbuildclpmodel.o: aderbuildclpmodel.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderbuildclpmodel.c
+
+aderburnmaterials.o: aderburnmaterials.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderburnmaterials.c
+
+adercheckmaterialclusterisotopes.o: adercheckmaterialclusterisotopes.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercheckmaterialclusterisotopes.c
+
+adercheckmaterialremovaltables.o: adercheckmaterialremovaltables.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercheckmaterialremovaltables.c
+
+aderclearaderxsdata.o: aderclearaderxsdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderclearaderxsdata.c
+
+aderclearmaterialcompmatrixclustermempresrowbounds.o: aderclearmaterialcompmatrixclustermempresrowbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderclearmaterialcompmatrixclustermempresrowbounds.c
+
+adercomparematerialremovaltables.o: adercomparematerialremovaltables.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercomparematerialremovaltables.c
+
+adercopymaterialflux.o: adercopymaterialflux.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercopymaterialflux.c
+
+adercorrecttransportcycle.o: adercorrecttransportcycle.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercorrecttransportcycle.c
+
+adercountstream.o: adercountstream.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercountstream.c
+
+adercountstreamisos.o: adercountstreamisos.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercountstreamisos.c
+	
+adercreateadercndentry.o: adercreateadercndentry.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreateadercndentry.c
+	
+adercreateadercontrolentry.o: adercreateadercontrolentry.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreateadercontrolentry.c
+	
+adercreateadergroupentry.o: adercreateadergroupentry.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreateadergroupentry.c
+
+adercreateaderoxidationentry.o: adercreateaderoxidationentry.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreateaderoxidationentry.c
+
+adercreateaderremovalentry.o: adercreateaderremovalentry.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreateaderremovalentry.c
+
+adercreateaderstreamentry.o: adercreateaderstreamentry.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreateaderstreamentry.c
+
+adercreatematerialclustermemcompmatrixsection.o: adercreatematerialclustermemcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreatematerialclustermemcompmatrixsection.c
+
+adercreatematerialcmpgroupcompmatrixsection.o: adercreatematerialcmpgroupcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreatematerialcmpgroupcompmatrixsection.c
+
+adercreatematerialcompmatrix.o: adercreatematerialcompmatrix.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreatematerialcompmatrix.c
+
+adercreatematerialcompmatrixcol.o: adercreatematerialcompmatrixcol.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreatematerialcompmatrixcol.c
+
+adercreatematerialcompmatrixrow.o: adercreatematerialcompmatrixrow.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreatematerialcompmatrixrow.c
+
+adercreatematerialelecompmatrixsection.o: adercreatematerialelecompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreatematerialelecompmatrixsection.c
+
+adercreatematerialisocompmatrixsection.o: adercreatematerialisocompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreatematerialisocompmatrixsection.c
+
+adercreatematerialoxicompmatrixsection.o: adercreatematerialoxicompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreatematerialoxicompmatrixsection.c
+
+adercreatematerialprescompmatrixsection.o: adercreatematerialprescompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreatematerialprescompmatrixsection.c
+
+adercreatematerialrhocompmatrixsection.o: adercreatematerialrhocompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreatematerialrhocompmatrixsection.c
+
+adercreatematerialstreamcompmatrixsection.o: adercreatematerialstreamcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c adercreatematerialstreamcompmatrixsection.c
+
+aderdeallocatetarget: aderdeallocatetarget.o header.h locations.h
+	$(CC) $(CFLAGS) -c aderdeallocatetarget.c
+
+aderfillmaterialclustermemcompmatrixsection.o: aderfillmaterialclustermemcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialclustermemcompmatrixsection.c
+
+aderfillmaterialcmpgroupcompmatrixsection.o: aderfillmaterialcmpgroupcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialcmpgroupcompmatrixsection.c
+
+aderfillmaterialcmprtocompmatrixsection.o: aderfillmaterialcmprtocompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialcmprtocompmatrixsection.c
+
+aderfillmaterialcmpsumcompmatrixsection.o: aderfillmaterialcmpsumcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialcmpsumcompmatrixsection.c
+
+aderfillmaterialcompmatrix.o: aderfillmaterialcompmatrix.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialcompmatrix.c
+
+aderfillmaterialcompmatrixeledata.o: aderfillmaterialcompmatrixeledata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialcompmatrixeledata.c
+
+aderfillmaterialcompmatrixisodata.o: aderfillmaterialcompmatrixisodata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialcompmatrixisodata.c
+
+aderfillmaterialcompmatrixobjrow.o: aderfillmaterialcompmatrixobjrow.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialcompmatrixobjrow.c
+
+aderfillmaterialelecompmatrixsection.o: aderfillmaterialelecompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialelecompmatrixsection.c
+
+aderfillmaterialisocompmatrixsection.o: aderfillmaterialisocompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialisocompmatrixsection.c
+
+aderfillmaterialobjactfeedandremvcompmatrixsection.o: aderfillmaterialobjactfeedandremvcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialobjactfeedandremvcompmatrixsection.c
+
+aderfillmaterialobjactfeedcompmatrixsection.o: aderfillmaterialobjactfeedcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialobjactfeedcompmatrixsection.c
+
+aderfillmaterialobjactreaccompmatrixsection.o: aderfillmaterialobjactreaccompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialobjactreaccompmatrixsection.c
+
+aderfillmaterialobjactredoxcompmatrixsection.o: aderfillmaterialobjactredoxcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialobjactredoxcompmatrixsection.c
+
+aderfillmaterialobjactremvcompmatrixsection.o: aderfillmaterialobjactremvcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialobjactremvcompmatrixsection.c
+
+aderfillmaterialobjactstreamscompmatrixsection.o: aderfillmaterialobjactstreamscompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialobjactstreamscompmatrixsection.c
+
+aderfillmaterialobjacttransferscompmatrixsection.o: aderfillmaterialobjacttransferscompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialobjacttransferscompmatrixsection.c
+
+aderfillmaterialobjstreamcompmatrixsection.o: aderfillmaterialobjstreamcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialobjstreamcompmatrixsection.c
+
+aderfillmaterialobjgrpcompmatrixsection.o: aderfillmaterialobjgrpcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialobjgrpcompmatrixsection.c
+
+aderfillmaterialoxicompmatrixsection.o: aderfillmaterialoxicompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialoxicompmatrixsection.c
+
+aderfillmaterialprescompmatrixsection.o: aderfillmaterialprescompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialprescompmatrixsection.c
+
+aderfillmaterialpresmolscompmatrixsection.o: aderfillmaterialpresmolscompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialpresmolscompmatrixsection.c
+
+aderfillmaterialstreamcompmatrixsection.o: aderfillmaterialstreamcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfillmaterialstreamcompmatrixsection.c
+
+aderfindshadowstream.o: aderfindshadowstream.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfindshadowstream.c
+
+aderfindshadowstreamsumstreams.o: aderfindshadowstreamsumstreams.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderfindshadowstreamsumstreams.c
+
+adergetburnmatrixsizedata.o: adergetburnmatrixsizedata.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergetburnmatrixsizedata.c
+
+adergetburnmatrixvalue.o: adergetburnmatrixvalue.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergetburnmatrixvalue.c
+
+adergeteigenbias.o: adergeteigenbias.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergeteigenbias.c
+
+adergetisoburnmatrixindex.o: adergetisoburnmatrixindex.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergetisoburnmatrixindex.c
+
+adergetleakagecorrectionfactor.o: adergetleakagecorrectionfactor.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergetleakagecorrectionfactor.c
+	
+adergetmaterialcompmatrixelement.o: adergetmaterialcompmatrixelement.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergetmaterialcompmatrixelement.c
+
+adergetmateleisofrac.o: adergetmateleisofrac.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergetmateleisofrac.c
+
+adergetmaterialremovalamounts.o: adergetmaterialremovalamounts.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergetmaterialremovalamounts.c
+
+adergetmaterialshadowstreamisofracs.o: adergetmaterialshadowstreamisofracs.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergetmaterialshadowstreamisofracs.c
+
+adergetmaterialstreamunfixedeleisofracs.o: adergetmaterialstreamunfixedeleisofracs.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergetmaterialstreamunfixedeleisofracs.c
+
+adergetstreamremovalamounts.o: adergetstreamremovalamounts.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergetstreamremovalamounts.c
+
+adergetstreamtargetremovalamount.o: adergetstreamtargetremovalamount.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergetstreamtargetremovalamount.c
+	
+adergettargetremovalamount.o: adergettargetremovalamount.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergettargetremovalamount.c
+
+adergettransportinformation.o: adergettransportinformation.c header.h locations.h
+	$(CC) $(CFLAGS) -c adergettransportinformation.c
+
+adermakeburnmatrix.o: adermakeburnmatrix.c header.h locations.h
+	$(CC) $(CFLAGS) -c adermakeburnmatrix.c
+
+adermapdensityvector.o: adermapdensityvector.c header.h locations.h
+	$(CC) $(CFLAGS) -c adermapdensityvector.c
+
+adermapdensityvectorstream.o: adermapdensityvectorstream.c header.h locations.h
+	$(CC) $(CFLAGS) -c adermapdensityvectorstream.c
+
+aderlinkmaterialgroupisotopes.o: aderlinkmaterialgroupisotopes.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderlinkmaterialgroupisotopes.c
+
+aderlinkmaterialisotopeindices.o: aderlinkmaterialisotopeindices.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderlinkmaterialisotopeindices.c
+
+aderlinkmaterialstreamisotopes.o: aderlinkmaterialstreamisotopes.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderlinkmaterialstreamisotopes.c
+
+adermatchmaterialclusterisotopes.o: adermatchmaterialclusterisotopes.c header.h locations.h
+	$(CC) $(CFLAGS) -c adermatchmaterialclusterisotopes.c
+
+adermergeclusters.o: adermergeclusters.c header.h locations.h
+	$(CC) $(CFLAGS) -c adermergeclusters.c
+
+adermoveboseosps1values.o: adermoveboseosps1values.c header.h locations.h
+	$(CC) $(CFLAGS) -c adermoveboseosps1values.c
+
+adermovecrosssection.o: adermovecrosssection.c header.h locations.h
+	$(CC) $(CFLAGS) -c adermovecrosssection.c
+
+adernormalizecrosssection.o: adernormalizecrosssection.c header.h locations.h
+	$(CC) $(CFLAGS) -c adernormalizecrosssection.c
+
+aderoperatematerial.o: aderoperatematerial.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderoperatematerial.c
+
+aderoperatematerialcompmatrix.o: aderoperatematerialcompmatrix.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderoperatematerialcompmatrix.c
+
+aderoutputburnmatrixascsv.o: aderoutputburnmatrixascsv.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderoutputburnmatrixascsv.c
+
+aderoutputmaterialcompmatrixascsv.o: aderoutputmaterialcompmatrixascsv.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderoutputmaterialcompmatrixascsv.c
+	
+aderoutputmaterialcompmatrixdata.o: aderoutputmaterialcompmatrixdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderoutputmaterialcompmatrixdata.c
+
+aderoutputmaterialcompmatrixstreamdata.o: aderoutputmaterialcompmatrixstreamdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderoutputmaterialcompmatrixstreamdata.c
+
+aderparseclpsolution.o: aderparseclpsolution.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderparseclpsolution.c
+
+aderparsestreamclpsolution.o: aderparsestreamclpsolution.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderparsestreamclpsolution.c
+
+aderprintcrosssections.o: aderprintcrosssections.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprintcrosssections.c
+
+aderprintfinalstepcrosssections.o: aderprintfinalstepcrosssections.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprintfinalstepcrosssections.c
+
+aderprintindentedoutput.o: aderprintindentedoutput.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprintindentedoutput.c
+
+aderprintlistshierarchy.o: aderprintlistshierarchy.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprintlistshierarchy.c
+
+aderprintmaterialstreamisotopes.o: aderprintmaterialstreamisotopes.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprintmaterialstreamisotopes.c
+
+aderprintoutput.o: aderprintoutput.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprintoutput.c
+
+aderprintoutputstreamdata.o: aderprintoutputstreamdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprintoutputstreamdata.c
+
+aderprintsumstreams.o: aderprintsumstreams.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprintsumstreams.c
+
+aderprocessaderclustermems.o: aderprocessaderclustermems.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessaderclustermems.c
+
+aderprocessaderclusters.o: aderprocessaderclusters.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessaderclusters.c
+
+aderprocessadergroupfractions.o: aderprocessadergroupfractions.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessadergroupfractions.c
+
+aderprocessadergroups.o: aderprocessadergroups.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessadergroups.c
+
+aderprocessadermaindata.o: aderprocessadermaindata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessadermaindata.c
+
+aderprocessaderstreams.o: aderprocessaderstreams.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessaderstreams.c
+
+aderprocessaderstreamsourcesanddests.o: aderprocessaderstreamsourcesanddests.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessaderstreamsourcesanddests.c
+
+aderprocessadersumgroup.o: aderprocessadersumgroup.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessadersumgroup.c
+
+aderprocessburnmatrixcontstream.o: aderprocessburnmatrixcontstream.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessburnmatrixcontstream.c
+
+aderprocessburnmatrixfissionyield.o: aderprocessburnmatrixfissionyield.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessburnmatrixfissionyield.c
+
+aderprocessburnmatrixpropstream.o: aderprocessburnmatrixpropstream.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessburnmatrixpropstream.c
+
+aderprocessburnmatrixtransmutationanddecay.o: aderprocessburnmatrixtransmutationanddecay.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessburnmatrixtransmutationanddecay.c
+
+aderprocessmaterialaderclustermems.o: aderprocessmaterialaderclustermems.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialaderclustermems.c
+
+aderprocessmaterialaderclusterparent.o: aderprocessmaterialaderclusterparent.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialaderclusterparent.c
+
+aderprocessmaterialaderclusters.o: aderprocessmaterialaderclusters.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialaderclusters.c
+
+aderprocessmaterialadercndcntdata.o: aderprocessmaterialadercndcntdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialadercndcntdata.c
+	
+aderprocessmaterialadercnddata.o: aderprocessmaterialadercnddata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialadercnddata.c
+
+aderprocessmaterialadercndoptdata.o: aderprocessmaterialadercndoptdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialadercndoptdata.c
+
+aderprocessmaterialadercndoxidata.o: aderprocessmaterialadercndoxidata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialadercndoxidata.c
+
+aderprocessmaterialadercndpresdata.o: aderprocessmaterialadercndpresdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialadercndpresdata.c
+
+aderprocessmaterialaderdata.o: aderprocessmaterialaderdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialaderdata.c
+
+aderprocessmaterialaderisosdata.o: aderprocessmaterialaderisosdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialaderisosdata.c
+
+aderprocessmaterialclusteroptentry.o: aderprocessmaterialclusteroptentry.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialclusteroptentry.c
+
+aderprocessmaterialcndgroupdata.o: aderprocessmaterialcndgroupdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialcndgroupdata.c
+
+aderprocessmaterialcndrngdata.o: aderprocessmaterialcndrngdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialcndrngdata.c
+
+aderprocessmaterialcndrtodata.o: aderprocessmaterialcndrtodata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialcndrtodata.c
+
+aderprocessmaterialconditions.o: aderprocessmaterialconditions.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialconditions.c
+
+aderprocessmaterialdiscstreameffects.o: aderprocessmaterialdiscstreameffects.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialdiscstreameffects.c
+
+aderprocessmaterialgroupcomposition.o: aderprocessmaterialgroupcomposition.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialgroupcomposition.c
+
+aderprocessmaterialremovaldata.o: aderprocessmaterialremovaldata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialremovaldata.c
+
+aderprocessmaterialremovalele.o: aderprocessmaterialremovalele.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialremovalele.c
+
+aderprocessmaterialremovalentrydata.o: aderprocessmaterialremovalentrydata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialremovalentrydata.c
+
+aderprocessmaterialremovalisos.o: aderprocessmaterialremovalisos.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialremovalisos.c
+
+aderprocessmaterialshadowstreamcompmatrixsection.o: aderprocessmaterialshadowstreamcompmatrixsection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialshadowstreamcompmatrixsection.c
+
+aderprocessmaterialshadowstreameleandisofracs.o: aderprocessmaterialshadowstreameleandisofracs.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialshadowstreameleandisofracs.c
+
+aderprocessmaterialshadowstreams.o: aderprocessmaterialshadowstreams.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialshadowstreams.c
+
+aderprocessmaterialstreamdata.o: aderprocessmaterialstreamdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialstreamdata.c
+
+aderprocessmaterialstreamgroupdata.o: aderprocessmaterialstreamgroupdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialstreamgroupdata.c
+
+aderprocessmaterialstreams.o: aderprocessmaterialstreams.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialstreams.c
+
+aderprocessmaterialstreamunfixedele.o: aderprocessmaterialstreamunfixedele.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialstreamunfixedele.c
+
+aderprocessmaterialstreamunfixedeleisofracs.o: aderprocessmaterialstreamunfixedeleisofracs.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderprocessmaterialstreamunfixedeleisofracs.c
+
+aderreadadercndcntdata.o: aderreadadercndcntdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadercndcntdata.c
+	
+aderreadadercnddata.o: aderreadadercnddata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadercnddata.c
+
+aderreadadercndoptdata.o: aderreadadercndoptdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadercndoptdata.c
+
+aderreadadercndoxidata.o: aderreadadercndoxidata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadercndoxidata.c
+
+aderreadadercndpresdata.o: aderreadadercndpresdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadercndpresdata.c
+
+aderreadadercndrngdata.o: aderreadadercndrngdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadercndrngdata.c
+
+aderreadadercndrtodata.o: aderreadadercndrtodata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadercndrtodata.c
+
+aderreadadercontroldata.o: aderreadadercontroldata.c element_data.h header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadercontroldata.c
+
+aderreadadergroupdata.o: aderreadadergroupdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadergroupdata.c
+
+aderreadadergroupisosdata.o: aderreadadergroupisosdata.c element_data.h header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadergroupisosdata.c
+
+aderreadadergroupitemdata.o: aderreadadergroupitemdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadergroupitemdata.c
+
+aderreadadergroupsumdata.o: aderreadadergroupsumdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadergroupsumdata.c
+
+aderreadaderkmaxdata.o: aderreadaderkmaxdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadaderkmaxdata.c
+
+aderreadaderkmindata.o: aderreadaderkmindata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadaderkmindata.c
+
+aderreadadernegadens.o: aderreadadernegadens.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadernegadens.c
+
+aderreadaderoixidationdata.o: aderreadaderoxidationdata.c element_data.h header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadaderoxidationdata.c
+
+aderreadaderremovaldata.o: aderreadaderremovaldata.c element_data.h header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadaderremovaldata.c
+
+aderreadaderstreamdata.o: aderreadaderstreamdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadaderstreamdata.c
+
+aderreadadertransiterdata.o: aderreadadertransiterdata.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderreadadertransiterdata.c
+
+aderscorecrosssection.o: aderscorecrosssection.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderscorecrosssection.c
+
+adersetmatadermem.o: adersetmatadermem.c element_data.h header.h locations.h
+	$(CC) $(CFLAGS) -c adersetmatadermem.c
+
+adersetmaterialcompmatrixclustermemcolbounds.o: adersetmaterialcompmatrixclustermemcolbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c adersetmaterialcompmatrixclustermemcolbounds.c
+
+adersetmaterialcompmatrixclustermemoxirowbounds.o: adersetmaterialcompmatrixclustermemoxirowbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c adersetmaterialcompmatrixclustermemoxirowbounds.c
+
+adersetmaterialcompmatrixclustermempresrowbounds.o: adersetmaterialcompmatrixclustermempresrowbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c adersetmaterialcompmatrixclustermempresrowbounds.c
+
+adersetmaterialcompmatrixclustermemrhorowbounds.o: adersetmaterialcompmatrixclustermemrhorowbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c adersetmaterialcompmatrixclustermemrhorowbounds.c
+
+adersetmaterialcompmatrixclustermemremovaltablerowbounds.o: adersetmaterialcompmatrixclustermemremovaltablerowbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c adersetmaterialcompmatrixclustermemremovaltablerowbounds.c
+
+adersetmaterialcompmatrixclustermemrhorowentries.o: adersetmaterialcompmatrixclustermemrhorowentries.c header.h locations.h
+	$(CC) $(CFLAGS) -c adersetmaterialcompmatrixclustermemrhorowentries.c
+
+adersetmaterialcompmatrixclustermemrowbounds.o: adersetmaterialcompmatrixclustermemrowbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c adersetmaterialcompmatrixclustermemrowbounds.c
+
+adersetmaterialcompmatrixelement.o: adersetmaterialcompmatrixelement.c header.h locations.h
+	$(CC) $(CFLAGS) -c adersetmaterialcompmatrixelement.c
+
+adersetmaterialcompmatrixcolbounds.o: adersetmaterialcompmatrixcolbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c adersetmaterialcompmatrixcolbounds.c
+
+adersetmaterialcompmatrixrowbounds.o: adersetmaterialcompmatrixrowbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c adersetmaterialcompmatrixrowbounds.c
+
+adersetshadowstreamremovalamount.o: adersetshadowstreamremovalamount.c header.h locations.h
+	$(CC) $(CFLAGS) -c adersetshadowstreamremovalamount.c
+
+adersolveclpmodel.o: adersolveclpmodel.c Clp_C_Interface.h Coin_C_defines.h header.h locations.h
+	$(CC) $(CFLAGS) -c adersolveclpmodel.c
+
+aderstoreburnmatrixcolumn.o: aderstoreburnmatrixcolumn.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderstoreburnmatrixcolumn.c
+
+aderupdatematerialdiscstreameffects.o: aderupdatematerialdiscstreameffects.c header.h locations.h
+	$(CC) $(CFLAGS) -c aderupdatematerialdiscstreameffects.c
+
+runtests.o: runtests.c header.h locations.h serp_tests.h
+	$(CC) $(CFLAGS) -c runtests.c
+
+testaderallocateclpmemory.o: testaderallocateclpmemory.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderallocateclpmemory.c
+
+testaderaveragevalue.o: testaderaveragevalue.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderaveragevalue.c
+
+testaderbuildclpmodel.o: testaderbuildclpmodel.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderbuildclpmodel.c
+
+testaderclpmodel.o: testaderclpmodel.c Clp_C_Interface.h Coin_C_defines.h header.h locations.h
+	$(CC) $(CFLAGS) -c testaderclpmodel.c
+
+testadercompareburnmatrices.o: testadercompareburnmatrices.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadercompareburnmatrices.c
+
+testadercopymaterialflux.o: testadercopymaterialflux.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadercopymaterialflux.c
+
+testadercountstream.o: testadercountstream.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadercountstream.c
+
+testaderfillmatcompmatrixpresmolsrow.o: testaderfillmatcompmatrixpresmolsrow.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderfillmatcompmatrixpresmolsrow.c
+
+testaderfixcomposition.o: testaderfixcomposition.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderfixcomposition.c
+
+testadergetburnmatrixsizedata.o: testadergetburnmatrixsizedata.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadergetburnmatrixsizedata.c
+
+testadergetburnmatrixvalue.o: testadergetburnmatrixvalue.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadergetburnmatrixvalue.c
+
+testadergeteigenbias.o: testadergeteigenbias.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadergeteigenbias.c
+
+testadergetisoburnmatrixindex.o: testadergetisoburnmatrixindex.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadergetisoburnmatrixindex.c
+
+testadergettargetremovalamount.o: testadergettargetremovalamount.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadergettargetremovalamount.c
+
+testadermakeburnmatrix.o: testadermakeburnmatrix.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermakeburnmatrix.c
+
+testadermapdensityvector.o: testadermapdensityvector.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermapdensityvector.c
+
+testadermatelebalbounds.o: testadermatelebalbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatelebalbounds.c
+
+testadermatelefutbounds.o: testadermatelefutbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatelefutbounds.c
+
+testadermatelefutcolbounds.o: testadermatelefutcolbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatelefutcolbounds.c
+
+testadermateleisobounds.o: testadermateleisobounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermateleisobounds.c
+
+testadermatisoabsmicxsbos.o: testadermatisoabsmicxsbos.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatisoabsmicxsbos.c
+
+testadermatisoabsmicxseosinit.o: testadermatisoabsmicxseosinit.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatisoabsmicxseosinit.c
+
+testadermatisoabsmicxsps1init.o: testadermatisoabsmicxsps1init.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatisoabsmicxsps1init.c
+
+testadermatisobalbounds.o: testadermatisobalbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatisobalbounds.c
+
+testadermatisofutbounds.o: testadermatisofutbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatisofutbounds.c
+
+testadermatisofutcolbounds.o: testadermatisofutcolbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatisofutcolbounds.c
+
+testadermatisonubarfismicxsbos.o: testadermatisonubarfismicxsbos.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatisonubarfismicxsbos.c
+
+testadermatisonubarfismicxseosinit.o: testadermatisonubarfismicxseosinit.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatisonubarfismicxseosinit.c
+
+testadermatisonubarfismicxsps1init.o: testadermatisonubarfismicxsps1init.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatisonubarfismicxsps1init.c
+
+testadermatisorhorowentry.o: testadermatisorhorowentry.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatisorhorowentry.c
+
+testadermatmaxrhominrowbound.o: testadermatmaxrhominrowbound.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatmaxrhominrowbound.c
+
+testadermatminrhomaxrowbound.o: testadermatminrhomaxrowbound.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatminrhomaxrowbound.c
+
+testadernormalizematerialstreamdensity.o: testadernormalizematerialstreamdensity.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadernormalizematerialstreamdensity.c
+
+testadermatpresbounds.o: testadermatpresbounds.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatpresbounds.c
+
+testadermatremveleamount.o: testadermatremveleamount.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatremveleamount.c
+
+testadermatremvisoamount.o: testadermatremvisoamount.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatremvisoamount.c
+
+testadermatsysleakagebos.o: testadermatsysleakagebos.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatsysleakagebos.c
+
+testadermatsysleakageeos.o: testadermatsysleakageeos.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatsysleakageeos.c
+
+testadermatsysleakageps1init.o: testadermatsysleakageps1init.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermatsysleakageps1init.c
+
+testadermodifyclpsolution.o: testadermodifyclpsolution.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadermodifyclpsolution.c
+
+testaderpaseclpsolution.o: testaderpaseclpsolution.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderpaseclpsolution.c
+
+testaderprocessmatstreameleunfixedisoelefrac.o: testaderprocessmatstreameleunfixedisoelefrac.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderprocessmatstreameleunfixedisoelefrac.c
+
+testaderprocessmatstreameleunfixedisofrac.o: testaderprocessmatstreameleunfixedisofrac.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderprocessmatstreameleunfixedisofrac.c
+
+testaderprocessmatsumstreameleunfixedisofrac.o: testaderprocessmatsumstreameleunfixedisofrac.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderprocessmatsumstreameleunfixedisofrac.c
+
+testadersolveclpmodel.o: testadersolveclpmodel.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadersolveclpmodel.c
+
+testadertransmuxs.o: testadertransmuxs.c header.h locations.h
+	$(CC) $(CFLAGS) -c testadertransmuxs.c
+
+testaderupdatematerialcompmatrixstreamisofracs.o: testaderupdatematerialcompmatrixstreamisofracs.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderupdatematerialcompmatrixstreamisofracs.c
+
+testaderupdatematerialcompmatrixsumstreamisofracs.o: testaderupdatematerialcompmatrixsumstreamisofracs.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderupdatematerialcompmatrixsumstreamisofracs.c
+
+testaderupdatematerialdiscstreameffects.o: testaderupdatematerialdiscstreameffects.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderupdatematerialdiscstreameffects.c
+
+testaderupdatematerialdiscsumstreameffects.o: testaderupdatematerialdiscsumstreameffects.c header.h locations.h
+	$(CC) $(CFLAGS) -c testaderupdatematerialdiscsumstreameffects.c
+
+testasciifile.o: testasciifile.c header.h
+	$(CC) $(CFLAGS) -c testasciifile.c
+
+testcases.o: testcases.c element_data.h header.h locations.h serp_tests.h
+	$(CC) $(CFLAGS) -c testcases.c
+
+printtest.o: printtest.c header.h locations.h
+	$(CC) $(CFLAGS) -c printtest.c
+
+finaltestreport.o: finaltestreport.c header.h locations.h
+	$(CC) $(CFLAGS) -c finaltestreport.c

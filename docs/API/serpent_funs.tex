@@ -1,0 +1,87 @@
+Considering that ADER is a source code modification to the SERPENT2 base a basic
+understanding of SERPENT2 programming is essential for working in ADER. The
+following is \textit{not} intended to be a SERPENT2 API nor will it have near
+as much detail. Rather, this section is meant to introduce the reader to key
+SERPENT2 structures so that the reader is then prepared to discover more
+on their own.
+The first aspect of SERPENT2 to grasp is not a function but an array - in fact
+it is best of think of this array as an object from the priciples of
+object-oriented programming. The \texttt{WDB}, or 
+\textbf{W}rite \textbf{D}ata\textbf{B}ase, is a monolithic array of doubles.
+\texttt{RDB} is a write-protected cast of \texttt{WDB}. \texttt{WDB} holds
+almost all of the program information for SERPENT2 cast as a \texttt{double} and
+formatted as an array of linked lists.
+The header file, \texttt{locations.h}, holds the initial data structure that
+\texttt{WDB} is built from - this is where the initial array location for
+the first item in each linked list can be found.
+Additionally, and of less importance, are the following arrays: \texttt{PRIVA}
+is a doubles array for OpenMP data, \texttt{BUF} is a short term accumulation
+array, \texttt{RES1} is a doubles array generally for holding results pulled
+from \texttt{BUF}, \texttt{RES2} is an array used for memory optimization in the
+burnup routines as is \texttt{RES3} while both are involved with the threaded
+behavior of SERPENT2, \texttt{ASCII} is a \texttt{char*} array.
+An important concept to keep in mind is that the location of data in all of
+these arrays is described by the data in \texttt{WDB}. This data is accessed and
+manipulated by functions inside of SERPENT2. While C is not an object-oriented
+language by default SERPENT2 behaves as an object-oriented program in that
+many of its objects, these data arrays, should only be acted on by specific
+methods, functions inside of SEPRENT.  Before diving in to these
+functions it should be noted that many variables in SERPENT2 have some name of
+``\texttt{ptr}" or a varient thereof. These variables do not indicate C-style
+pointers - variables declared with an ``\texttt{*}". Rather they are usually
+an array index at which some data of interest can be found. This is mentioned
+as the naming convention could cause confusion.
+
+\subsection{AverageTransmuXS}
+\input{funs/AverageTransmuXS}
+
+\subsection{BurnMaterials}
+\input{funs/BurnMaterials}
+
+\subsection{BurnMatrixSixe}
+\input{funs/BurnMatrixSize}
+
+\subsection{BurnupCycle}
+\input{funs/BurnupCycle}
+
+\subsection{CalculateTransmuXS}
+\input{funs/CalculateTransmuXS}
+
+\subsection{GetPrivateData}
+\input{funs/GetPrivateData}
+
+\subsection{GetText}
+\input{funs/GetText}
+
+\subsection{MaterialBurnup}
+\input{funs/MaterialBurnup}
+
+\subsection{MakeBurnMatrix}
+\input{funs/MakeBurnMatrix}
+
+\subsection{NewItem}
+\input{funs/NewItem}
+
+\subsection{NextItem}
+\input{funs/NextItem}
+
+\subsection{PrepareTransportCycle}
+\input{funs/PrepareTransportCycle}
+
+\subsection{PrintDepOutput}
+\input{funs/PrintDepOutput}
+
+\subsection{ProcessMaterials}
+\input{funs/ProcessMaterials}
+
+\subsection{ReadInput}
+\input{funs/ReadInput}
+
+\subsection{StoreTransmuXS}
+\input{funs/StoreTransmuXS}
+
+\subsection{TestParam}
+\input{funs/TestParam}
+
+\subsection{TransportCycle}
+\input{funs/TransportCycle}

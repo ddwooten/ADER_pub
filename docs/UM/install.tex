@@ -1,0 +1,214 @@
+Installing ADER is a five step process: Downloading ADER covered in section
+\ref{ssec:dader}, installing the CLP libraries covered
+in section \ref{ssec:dclp}, editing the necessary lines in the SERPENT2
+base code covered in section \ref{ssec:edit}, compiling the code covered
+in section \ref{ssec:compile}, and testing the code, already covered in
+section \ref{sec:test}. These instructions assume the user is operating
+inside of a linux-like environment.
+
+\subsection{Downloading ADER}\label{ssec:dader}
+ADER is available as a public repository hosted at\ldots
+\begin{lstlisting}
+some_web_address
+\end{lstlisting}
+
+Download ADER using your preferred client. The directories contained in the ADER
+parent directory, call this folder \texttt{ADER\_Dir}, are\ldots
+
+\begin{itemize}
+\item{\texttt{docs} - where this user manual and the API can be found in the
+subdirectories \texttt{docs/UM} and \texttt{docs/API}, respectively.}
+\item{\texttt{inputs} - where in the subdirectory, \texttt{inputs/Test\_Input},
+the file \texttt{test\_input.txt} can be found.}
+\item{\texttt{src} - where all of ADER's source files can be found.}
+\item{\texttt{System\_Testing} - where all of ADER's system tests can be found
+in their respective subdirectories titled after the test which they contain.
+Inside of each subdirectory is the test input file and a README file explaining
+the operation of the test.}
+\end{itemize}
+
+\subsection{Downloading and Installing CLP}\label{ssec:dclp}
+CLP is available as a public repository hosted at\ldots
+
+\begin{lstlisting}
+https://github.com/coin-or/Clp
+\end{lstlisting}
+
+Download CLP using your preferred client. Inside this directory, call it
+\texttt{Clp\_Dir}, there is one important subdirectory, \texttt{Clp\_Dir/Clp}.
+Inside of this subdirectory executing the following commands in a linux-like
+environment should install the Clp libraries on your system\ldots
+
+\begin{li}
+./configure
+./install-sh
+make all
+\end{li}
+
+Copy the file \texttt{Clp\_C\_Interface.h}, found in \texttt{Clp\_Dir/Clp/src},
+ into your SERPENT2 build directory. 
+After this process is complete do not forget to add the path to this
+subdirectory to all applicable system paths, most likely just your system
+\texttt{PATH}.
+
+
+\subsection{Editing SERPENT2}\label{ssec:edit}
+These instructions assume that the base version of SERPENT2 being modified
+is version 2.1.31. ADER DOES NOT WORK WITH VERSIONS OF SERPENT2 EARLIER THAN
+2.1.30.
+Compatibility with future versions of SERPENT2 and installation directions
+are not guaranteed.
+To configure SERPENT2 to interact with ADER three steps are necessary. First,
+copy all of the files found in \texttt{ADER\_Dir/src}, to the SERPENT2
+\texttt{src} directory ( or wherever you build SERPENT2).
+This might look something like the following\ldots
+
+\begin{li}
+cd ~/SERPENT2_Dir
+cp ~/ADER_Dir/src/* ./src/
+\end{li}
+
+In the directory \texttt{ADER\_Dir/docs/UM} there is a file named 
+``Source\_mod.txt". ``Ln" is short for ``line number".
+The contents of this file have the following format\ldots
+
+\begin{lstlisting}
+[function_name].c: Line number or description of location in file
+{
+#ADER MOD BEGIN#
+contents to add to file at the designated location
+#ADER MOD END#
+}
+\end{lstlisting}
+
+For each listing, add the code contents found between the
+\texttt{ADER MOD BEGIN} and \texttt{ADER MOD END} tags to the
+actual SERPENT2 source file given at the location
+described: this is either inserting new code lines following an existing
+SERPENT2 source line given as either an insertion listing or as a single line
+number or as a range of line numbers in which case this range is to be fully
+replaced by the ADER code sample. 
+A suggestion is to execute these file modifications
+from the modifications closest to the end of the file to the
+modification closest to the beginning of the file - in this way
+the line numbers you look for are unchanged by the addition of
+the ADER code.
+It is considered good practice to include the tags themselves
+,\texttt{ADER MOD BEGIN} and \texttt{ADER MOD END}, 
+but this is not strictly necessary.
+Consider the file, ``main.c", seen below\ldots
+
+\begin{lstlisting}
+#include header.h
+
+void main(args)
+{
+long j;
+long i = 0;
+
+i = 1;
+
+return(i);
+}
+\end{lstlisting}
+
+Now consider that one of the entries in the file
+``Source\_mod.txt" looks like the below\ldots
+
+\begin{lstlisting}
+Main: Ln 6-8
+{
+#ADER MOD BEGIN#
+for(j=0; j<10; j++)
+{
+    i++;
+}
+#ADER MOD END#
+}
+\end{lstlisting}
+
+The correctly modified main.c file would look like the below where lines 6 
+through 8 of the base file were replaced with the content between and including
+the ADER mod tags: ``\texttt{ADER MOD BEGIN}" and ``\texttt{ADER MOD END}".
+Please use your best discretion when editing these files. If a line number
+direction would cut off a \texttt{for} loop and cause compilation or logic
+errors, obviously that line number is incorrect and should be slightly
+different.
+
+\begin{lstlisting}
+#include header.h
+
+void main(args)
+{
+long i = 0;
+#ADER MOD BEGIN#
+for(j=0; j<10; j++)
+{
+    i++;
+}
+#ADER MOD END#
+return(i);
+}
+\end{lstlisting}
+
+\subsubsection{Modifying the Makefile}\label{sssec:makefile}
+Add the following lines to the SERPENT2 Makefile before the \texttt{OBJS} list
+but replace \texttt{[absolute/path/to/the/CLP/library]} with the actual path
+to the Clp library on your system.
+
+\begin{li}
+# ADER MOD BEGIN #
+###############################################################################
+
+# Below should be "-L[absolute/path/to/the/CLP/library] -lclpsolver
+#     and -L[absolute/path/to/the/CLP/library] -lclp
+
+LDFLAGS += -L/Clp_Dir/Clp/lib -lClpSolver -L/Clp_Dir/Clp/lib -lClp
+
+# Enable ADER_TEST to run the test_input.txt file to execute the 
+#     unit and integration test suite
+
+#CFLAGS += -DADER_TEST
+
+# Enable ADER_INT_TEST to ouput the files necessary for integration
+#     testing. Many of these files are human readable and useful 
+#     for manual debugging
+
+#CFLAGS += -DADER_INT_TEST
+
+# Enable ADER_DIAG to output a copious amount of debugging data
+
+#CFLAGS += -DADER_DIAG
+
+###############################################################################
+# ADER MOD END #
+\end{li}
+
+In the directory \texttt{ADER\_Dir/docs/UM} there is a file named 
+``Object\_list.txt" - add the contents of this file to the SERPENT2 Makefile
+\texttt{OBJS} list. You may alphabetize the entires if you care to but it is
+not necessary.
+
+In the directory \texttt{ADER\_Dir/docs/UM} there is a file named 
+``Build\_list.txt" - add the contents of this file to the SERPENT2 Makefile
+build list - the long list of makefile build instructions at the bottom
+of the file. You may alphabetize the entries if you care to but it is
+not necessary.
+
+\subsection{Compiling ADER}\label{ssec:compile}
+To compile ADER with SERPENT2, after having followed the steps in all previous
+subsections of this section, give the command below inside of your 
+\texttt{SERPENT2\_Dir/src} directory\ldots
+
+\begin{li}
+make all
+\end{li}
+
+To compile ADER for unit testing, uncomment the line with the phrase
+''\texttt{CFLAGS += DADER\_TEST}". When compiled this way the entire code will
+work for no other purpose than ADER unit testing conducted with the file
+``\texttt{test\_input.txt}" found inside the 
+``\texttt{ADER\_Dir/inputs/Test\_Input}" directory.
+
+The compilation flags ``\texttt{DADER\_DIAG}" and ``\texttt{DADER\_INT\_TEST}"
+are covered in section \ref{ssec:output_dev}.

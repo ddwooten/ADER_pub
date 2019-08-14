@@ -1,0 +1,13 @@
+\textbf{Info}: Determines the net amount of an isotope or element that is moved
+by all of a material's \texttt{rem} type streams by looping through all of a
+material's streams and calling \texttt{ADERGetStreamTargetRemovalAmount}.
+Thread safe. \\
+
+\noindent \textbf{Inputs}:
+\begin{itemize}
+\item{long mat}
+\item{long ele}
+\item{long iso}
+\end{itemize}
+
+\noindent \textbf{Returns}: double

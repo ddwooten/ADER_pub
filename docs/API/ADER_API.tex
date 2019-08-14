@@ -1,0 +1,99 @@
+\documentclass{article}
+
+\begin{document}
+
+\title{ADER: Advanced Depletion Extension for Reprocessing\\
+\vspace{10pt}\large{Ver: 1.0 - A SERPENT2 Extension}\\
+\vspace{10pt}\large{Application Interface}}
+
+\author{
+    Daniel D. Wooten
+}
+
+\clearpage
+\maketitle
+\pagebreak
+
+\tableofcontents
+\pagebreak
+
+\section{Preface}\label{sec:pref}
+This document is intended for developers of SERPENT2 and specifically those
+developers who wish to modify the ADER portions of SERPENT2. For users of
+General information about SERPENT2 can be found at the SERPENT2
+wiki: \verb|serpent.vtt.ft/mediawiki/index.php/Main_Page|
+While ADER specific help can be found in the ADER user manual.
+\\
+With regards to citing SERPENT2 and ADER, as stated on the SERPENT2 wiki general
+reference to SERPENT2 may be provided by - J. Leppanen, M. Pusa, T. Vittanen,
+V. Valtavirta, T. Kaltiaisenaho. \textit{``The Serpent Monte Carlo code: Status,
+development, and applications in 2013"}. Ann. Nucl. Energy, \textbf{82} (2015)
+142 - 150. Reference to ADER may be provided by - D. D. Wooten. \textit{ADER -
+Advanced Depletion Extension for Reprocessing}. (2019).
+\\
+ADER makes extensive use of the open-source library, Clp, part of the COIN-OR
+collection of packages. Supporting documentation for Clp can be found at: 
+\verb|https://github.com/coin-or/Clp|
+Of importance is that Clp is distributed under
+the Eclipse Public Licence which is not a copy-left licence but a rather
+forgiving open-source licence. Instructions for installing and linking the
+Clp libraries can be found in the user's manual.
+
+\section{Introduction}\label{sec:intro}
+ADER is a source code extension to SERPENT2. Originally developed by Daniel 
+Wooten at the University of California Berkeley ADER provides four key features
+to users of SERPENT2 - the ability to define relationships between isotopes,
+elements, and chemicals in a SERPENT2 material; the ability to define how
+the composition of these SERPENT2 materials may be adjusted; a solution for the
+optimal material composition and adjustment schedule; and the incorporation of
+these material adjustments into the nuclear burnup solution as determined by
+SERPENT2.
+\\
+In the following sections the inner workings of ADER will be laid out and
+explained. The functions will first be organized by themes of collective
+action and then elaborated upon alphabetically. A special section, 
+\ref{sec:serpent_funs}, will detail a handful of intrinsic SERPENT2 functions,
+an understanding of which will facilitate such of ADER.
+\\
+In section \ref{sec:ader_input} the functions relating to the interpretation
+of user input will be detailed. Section \ref{sec:ader_setup} will detail those
+functions that sort and link user input into the necessary data structures.
+Section \ref{sec:ader_opt} will detail those functions which construct and
+solve the optimization problem. Section \ref{sec:ader_burn} will detail those
+functions that handle the burnup solution. Section \ref{sec:ader_output} will
+detail those functions which output data to the user. Section 
+\ref{sec:ader_test} will detail those functions involved with the testing of
+ADER. Section \ref{sec:ader_para} will detail some of the methodology
+behind parallel computation with ADER.\\
+As a final note it needs to be mentioned up front that SERPENT2 makes extensive
+use of linked-lists and the term ``\texttt{ptr}". A ``\texttt{ptr}" in this
+sense is not a C-style pointer, a variable which contains a memory address, but
+the index of a monolithic array at which the desired data may be found. For
+instance, if \texttt{NUMBER-OF-CAT-LEGS-PTR = 6} then one would 
+expect that at \texttt{CAT-DATA-ARRAY[6]} would be the value ``\texttt{4}".
+C-style pointers are referred to simply as pointers.\\
+
+\section{Inside SERPENT2}\label{sec:serpent_funs}
+\input{serpent_funs}
+
+\section{ADER Input} \label{sec:ader_input}
+\input{ader_input}
+
+\section{ADER Setup} \label{sec:ader_setup}
+\input{ader_setup}
+
+\section{ADER Optimization} \label{sec:ader_opt}
+\input{ader_opt}
+
+\section{ADER Burnup} \label{sec:ader_burn}
+\input{ader_burn}
+
+\section{ADER Output} \label{sec:ader_output}
+\input{ader_ouput}
+
+\section{ADER Testing} \label{sec:ader_test}
+\input{ader_test}
+
+\section{ADER in Parallel} \label{sec:ader_para}
+\input{ader_para}
+\end{document}

@@ -1,0 +1,25 @@
+\textbf{Info}: If any one function could be considered the workhorse of ADER, 
+it would be this one. This function, called from
+\texttt{ADERCorrectTransportCycle} orders and executes the updating of a
+cluster's composition matrix as well as the determination of the optimal
+solution. Numerous components of the composition matrix require updating with
+each ADER iteration. The majority of these updates are due to changing isotopic
+compositions and possible changes to material densities.
+The \texttt{stream\_counter} variable is necessary as ADER simulations with
+only prescriptive streams will have no ``optimal" solution and as such the
+solving of such a problem should be skipped. Once the various updates to the
+composition matrix have been completed the solver function, 
+\texttt{ADEROperateMaterialCompMatrix} is called.\\
+
+\noindent \textbf{Inputs}:
+\begin{itemize}
+\item{long adj}
+\item{long dep}
+\item{long i}
+\item{long mat}
+\item{long step}
+\item{double t1}
+\item{double t2}
+\end{itemize}
+
+\noindent \textbf{Returns}: void

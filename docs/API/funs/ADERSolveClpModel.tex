@@ -1,0 +1,23 @@
+\textbf{Info}: Converts the SERPENT2 representation of the optimization problem
+into the form exepcted by the CLP library. Passes this constructed problem
+to the CLP library from which this function retreives the problem solution. \\
+
+\noindent \textbf{Inputs}:
+\begin{itemize}
+\item{double *column\_lower\_bounds}
+\item{double *column\_upper\_bounds}
+\item{double *index\_column\_starts}
+\item{long num\_cols}
+\item{long num\_ent}
+\item{long num\_rows}
+\item{double *objective\_row}
+\item{long opt\_dir}
+\item{double *row\_lower\_bounds}
+\item{double *row\_indices}
+\item{double *row\_upper\_bounds}
+\item{double *solution}
+\item{double *values}
+\item{long mat}
+\end{itemize}
+
+\noindent \textbf{Returns}: void

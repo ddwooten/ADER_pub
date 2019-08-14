@@ -1,0 +1,22 @@
+ADER includes an extensive suite of unit, integration, and system tests. 
+The system tests are not supported by an automated testing environment. Rather,
+the system tests, found in the \texttt{System\_Tests} directory of ADER, are
+composed of a README file describing the final results of the simulation 
+who's input file is provided. To run a system test, execute the given input
+file with the specified command line options and compare the simulation output
+with what the README file says to expect. For the integration and unit tests
+ADER should be compiled with the \texttt{-DADER\_TEST} and 
+\texttt{-DADER\_INT\_TEST} options and run with the simulation input found in 
+the \texttt{inputs/Test\_Input} directory titled ``\texttt{test\_input.txt}". A
+summary report titled ``\texttt{TestResults.test}'' will be produced in the
+executing directory. For a detailed accounting of the tests please see the
+source code. All tests are either, found in the \texttt{testcases.c} or
+have their own file with the name of ``\texttt{TESTADER[NameOfTest].c}". The
+file \texttt{serp\_tests.h} is an auxillery header file providing key information
+to the test management function, \texttt{runtests.c} which is responsible for
+executing the tests found in \texttt{testcases.c}. The standalone test
+functions, many of which are integration tests, are called from various places
+in the ADER framework, information which can be found in the function's
+doc-string. When compiled for unit and integration testing SERPENT2 will not 
+work properly for any other purpose and must be recompiled for 
+system testing or normal use.

@@ -1,0 +1,38 @@
+A few closing notes, restrictions, hints, and tips that didn't fit 
+elsewhere in the manual\ldots
+
+\begin{itemize}
+\item{Any SERPENT2 material with either a conditions block or one or more
+streams, must have the keyword \texttt{ader} appear in the material's definition
+before the listing of the material's constituent isotopes.}
+\item{If the user would like ADER to issue a warning every time the burnup
+solution produces a negative density for an isotope, which is then corrected to
+zero, place the following line in the simulation input. The value is arbitrary.
+\begin{lt}
+set ader_neg_adens [value]
+\end{lt}
+    }
+\item{ADER is not compatible with divided SERPENT2 materials. These may be used
+in the same simulation but divided materials, or their children, may not also
+be materials under ADER control.}
+\item{ADER is not compatible with SERPENT2's ``\texttt{mflow}" structure.
+Materials affected by \texttt{mflow} structures may be used in an ADER
+simulation but they may not in any way (other than neutronically) be connected
+with ADER or ADER materials.}
+\item{SERPENT2 employs a function, \texttt{MaterialBurnup}, which calculates
+the power produced by a material during a burnup step by the difference
+in abundances of isotopes in that material between the beginning of the burnup
+step and the end of the burnup step. This methodology assumes there are no
+mass flows in the system and has not been configured to incorporate ADER mass
+flows. AS SUCH - MATERIAL POWER ESTIMATES PROVIDED BY SERPENT2 WHEN RUNNING
+AN ADER SIMULATION WITH AT LEAST ONE CONTINUOUS OR PROPORTIONAL STREAM ARE
+LIKELY INCORRECT. The user can fix these power estimates themselves by 
+incorporating the mass moved by streams and the power produced from any 
+fissions on these masses.}
+\item{ADER's oxidation table structure does not recognize elements higher
+than Rg on the periodic table.}
+\item{On EVERY Monte-Carlo sweep SERPENT prints out cycle-wise data into the
+\texttt{[name]\_res.m} file. Every ADER iteration will produce a new entry for
+the same burnup step in this file with older entries becoming invalid but
+not erased. Be aware.}
+\end{itemize}

@@ -1,0 +1,170 @@
+Following the intake of user data, primarily controlled through \texttt{ReadInput},
+\texttt{ADERProcessAderMainData} is called by \texttt{main} during the setup
+portion of the run. ADER functions with the prefix
+ \texttt{ADERProcessMaterialAder}...
+generally refer to setup on a per-material basis of linking the system wide
+\texttt{ADER} data with the individual materials. 
+ADER functions with the prefix
+ \texttt{ADERProcessMaterial}...
+generally refer to setup on a per-material basis of material-wide \texttt{ADER}
+data 
+while those functions with the
+prefix \texttt{ADERProcessAder}... generally refer to setup on an ADER-wide
+basis. \texttt{ADERProcessMaterialAderData} is the primary function which calls
+the material specific setup functions, it is called from \texttt{ProcessMaterials}.
+It should be noted that throughout the code the terms \texttt{reprocessing} and
+\texttt{removal} are used interchangeably in reference to the \texttt{removal}
+table structure - as are their short-hands \texttt{remv} and \texttt{repro} 
+respectively.
+With regards to the data structure in ADER a few terms should be elaborated
+upon. The following definitions are to be taken as the primary definition of a
+term unless otherwise specified. ``ADER data" refers to the section
+of WDB accessed through the \texttt{DATA\_PTR\_ADER|} \texttt{ptr}. 
+``Material ADER data" refers to the data accessed for each material through the
+\texttt{MATERIAL\_ADER\_DATA} \texttt{ptr}. ``Group isotopes" and ''stream
+isotopes" refer to the isotopes which belong to a given group or stream and
+which are accessed through the \texttt{ADER\_MAT\_CMP\_ISOS\_PTR|} \texttt{ptr}
+and the \texttt{ADER\_MAT\_STREAM\_ISOS\_PTR|} \texttt{ptr} respectively. 
+``Material isotopes" refer to the isotope list in a material accessed through
+the \texttt{MATERIAL\_PTR\_COMP} \texttt{ptr} while ``material ader
+isotopes" refers to the isotope list in a material accessed through the
+\texttt{ADER\_MAT\_ISOS\_PTR} \texttt{ptr}. ``Material ADER data" refers
+to the ADER related data for a material stored with that material and accessed
+through the \texttt{MATERIAL\_ADER\_DATA} \texttt{ptr}. ``Composition
+groups" or ``comp groups" refers to groups which have a restricting effect
+on a material through either the \texttt{rng} or \texttt{rto} structures. 
+
+\subsection{ADERAddClusterMember}
+\input{funs/ADERAddClusterMember}
+
+\subsection{ADERCheckMaterialClusterIsotopes}
+\input{funs/ADERCheckMaterialClusterIsotopes}
+
+\subsection{ADERCheckMaterialRemovalTables}
+\input{funs/ADERCheckMaterialRemovalTables}
+
+\subsection{ADERCompareMaterialRemovalTables}
+\input{funs/ADERCompareMaterialRemovalTables}
+
+\subsection{ADERFindShadowStream}
+\input{funs/ADERFindShadowStream}
+
+\subsection{ADERFindShadowStreamSumStreams}
+\input{funs/ADERFindShadowStreamSumStreams}
+
+\subsection{ADERLinkMaterialGroupIsotopes}
+\input{funs/ADERLinkMaterialGroupIsotopes}
+
+\subsection{ADERLinkMaterialIsotopeIndices}
+\input{funs/ADERLinkMaterialIsotopeIndices}
+
+\subsection{ADERLinkMaterialStreamIsotopes}
+\input{funs/ADERLinkMaterialStreamIsotopes}
+
+\subsection{ADERMatchMaterialClusterIsotopes}
+\input{funs/ADERMatchMaterialClusterIsotopes}
+
+\subsection{ADERMergeClusters}
+\input{funs/ADERMergeClusters}
+
+\subsection{ADERProcessAderClusterMems}
+\input{funs/ADERProcessAderClusterMems}
+
+\subsection{ADERProcessAderClusters}
+\input{funs/ADERProcessAderClusters}
+
+\subsection{ADERProcessAderGroupFractions}
+\input{funs/ADERProcessAderGroupFractions}
+
+\subsection{ADERProcessAderStreamSourcesAndDests}
+\input{funs/ADERProcessAderStreamSourcesAndDests}
+
+\subsection{ADERProcessAderSumGroup}
+\input{funs/ADERProcessAderSumGroup}
+
+\subsection{ADERProcessAderGroups}
+\input{funs/ADERProcessAderGroups}
+
+\subsection{ADERProcessAderMainData}
+\input{funs/ADERProcessAderMainData}
+
+\subsection{ADERProcessAderStreams}
+\input{funs/ADERProcessAderStreams}
+
+\subsection{ADERProcessMaterialAderClusterMems}
+\input{funs/ADERProcessMaterialAderClusterMems}
+
+\subsection{ADERProcessMaterialAderClusterParent}
+\input{funs/ADERProcessMaterialAderClusterParent}
+
+\subsection{ADERProcessMaterialAderClusters}
+\input{funs/ADERProcessMaterialAderClusters}
+
+\subsection{ADERProcessMaterialAderCndCntData}
+\input{funs/ADERProcessMaterialAderCndCntData}
+
+\subsection{ADERProcessMaterialAderCndData}
+\input{funs/ADERProcessMaterialAderCndData}
+
+\subsection{ADERProcessMaterialAderCndOptData}
+\input{funs/ADERProcessMaterialAderCndOptData}
+
+\subsection{ADERProcessMaterialAderCndOxiData}
+\input{funs/ADERProcessMaterialAderCndOxiData}
+
+\subsection{ADERProcessMaterialAderCndPresData}
+\input{funs/ADERProcessMaterialAderCndPresData}
+
+\subsection{ADERProcessMaterialAderData}
+\input{funs/ADERProcessMaterialAderData}
+
+\subsection{ADERProcessMaterialAderIsosData}
+\input{funs/ADERProcessMaterialAderIsosData}
+
+\subsection{ADERProcessMaterialClusterOptEntry}
+\input{funs/ADERProcessMaterialClusterOptEntry}
+
+\subsection{ADERProcessMaterialCndGroupData}
+\input{funs/ADERProcessMaterialCndGroupData}
+
+\subsection{ADERProcessMaterialCndRngData}
+\input{funs/ADERProcessMaterialCndRngData}
+
+\subsection{ADERProcessMaterialCndRtoData}
+\input{funs/ADERProcessMaterialCndRtoData}
+
+\subsection{ADERProcessMaterialConditions}
+\input{funs/ADERProcessMaterialConditions}
+
+\subsection{ADERProcessMaterialGroupComposition}
+\input{funs/ADERProcessMaterialGroupComposition}
+
+\subsection{ADERProcessMaterialRemovalData}
+\input{funs/ADERProcessMaterialRemovalData}
+
+\subsection{ADERProcessMaterialRemovalEle}
+\input{funs/ADERProcessMaterialRemovalEle}
+
+\subsection{ADERProcessMaterialRemovalEntryData}
+\input{funs/ADERProcessMaterialRemovalEntryData}
+
+\subsection{ADERProcessMaterialRemovalIsos}
+\input{funs/ADERProcessMaterialRemovalIsos}
+
+\subsection{ADERProcessMaterialShadowStreamCompMatrixSection}
+\input{funs/ADERProcessMaterialShadowStreamCompMatrixSection}
+
+\subsection{ADERProcessMaterialShadowStreams}
+\input{funs/ADERProcessMaterialShadowStreams}
+
+\subsection{ADERProcessMaterialStreamData}
+\input{funs/ADERProcessMaterialStreamData}
+
+\subsection{ADERProcessMaterialStreamGroupData}
+\input{funs/ADERProcessMaterialStreamGroupData}
+
+\subsection{ADERProcessMaterialStreams}
+\input{funs/ADERProcessMaterialStreams}
+
+\subsection{ADERProcessMaterialStreamUnFixedEle}
+\input{funs/ADERProcessMaterialStreamUnFixedEle}

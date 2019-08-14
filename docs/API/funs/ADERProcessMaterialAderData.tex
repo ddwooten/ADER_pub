@@ -1,0 +1,16 @@
+\textbf{Info}: Loops through all SERPENT2 materials checking for those
+material's under ADER control. First calls functions to add materials to ADER
+clusters, to ensure that all cluster members have matching isotopics, to add
+conditions to materials, to connect streams to materials, and to link
+various \texttt{ptr}s related to isotopes and their data. Following these
+functions shadow streams are processed as all materials must already have
+streams to find the shadows ( see the user's manual for this term ). 
+The optimization entries are added to materials and then, following a check
+on some user data the material cluster composition optimization matrices are
+first constructed and allocated space in another function call. Once space has
+been allocated these matrices are then filled for the first time. Not thread
+safe.\\
+
+\noindent \textbf{Inputs}: None
+
+\noindent \textbf{Returns}: void

@@ -1,0 +1,225 @@
+At the most fundamental level a group in ADER is a list of proportions. This
+list describes the relative proportions of elements within the group. These
+elements may or may not have specified isotopic proportions and elements
+without a specified isotopic composition are permitted in the same group as
+elements \textit{with} a specified isotopic composition. Consider a group which
+specifies that fluorine be four times as abundant as uranium, within the group.
+This group could be used to describe a single molecule of \ce{UF4} or, just as
+equivalently, one mol of uranium and four mols of fluorine all in a bucket
+on a lab bench. A group is not defined by a quantity of material, but rather
+a recipe for a material. Just like defining materials in SERPENT2, the
+proportions of an element within a group are normalized to unity and the
+proportions of an isotope within an element are normalized to unity.
+As such groups in ADER are defined according to four
+methods A, B, C, or D as seen bellow.\\
+
+\noindent Method A: 
+\begin{lt}
+grp [Name] 
+[Element_1] [Element_1_frac] 
+... 
+<Element_n> (Element_n_frac)
+\end{lt}
+
+\noindent Method B:
+\begin{lt}
+grp [Name] 
+[Element_1] [Element_1_frac] <isos> (n_isos)
+(Iso_1) (Iso_1_frac)
+<Iso_n> (Iso_n_frac)
+...
+<Element_x> [Element_x_frac] <isos> (b_isos)
+(Iso_1) (Iso_1_frac)
+<Iso_b> (Iso_b_frac)
+\end{lt}
+
+\noindent Method C:
+\begin{lt}
+grp [Name] 
+[Element_1] [Element_1_frac] 
+...
+<Element_x> [Element_x_frac] <isos> (b_isos)
+(Iso_1) (Iso_1_frac)
+<Iso_b> (Iso_b_frac)
+\end{lt}
+
+\noindent Method D:
+\begin{lt}
+grp [Name] [sum]
+[Name_of_group_1] 1
+...
+<Name_of_group_n> 1
+\end{lt}
+
+The keyword \texttt{grp} begins the group section input. All input following 
+this word, until the next keyword is found, is taken as input for the
+aforementioned \texttt{grp}.
+The \texttt{Name} entry is an identifier by which the group will be located
+throughout the code - as such all groups require a unique name.
+In method A a group is defined only by the proportions of its elements. 
+The relative abundance of each element within the group is denoted by
+\texttt{Element\_x\_frac} while the values for \texttt{Element\_x} must be
+the alphabetic periodic table shorthand for that element, Ag for gold as an
+example. Elements with no prescribed isotopic composition are permitted to take
+on any combination of their own isotopes.
+
+In method B a group is defined in which each element has a list of specified 
+isotopic proportions. The values for \texttt{Iso\_n} must be the alphanumeric
+name of the isotope in the form ``Alpha-A", or U-233 for \ce{^{233}U}
+The proportions entered, \texttt{Iso\_n\_frac},
+are of the isotope relative to the 
+element as a whole. In method C a group is defined in which some of its elements
+have a specified list of isotopic proportions and some do not. Those elements
+which do not have a prescribed list of isotopic proportions are permitted to
+have any combination of their own isotopes. Lastly, in method D a new type
+of group is introduced - the summation group. A summation group is defined as
+the sum of the groups named in its list of component groups. These component
+groups may be defined using methods A, B, C, or D, allowing for nested summation
+groups. The value which follows a group name in a summation group definition 
+may be any value greater than 0; however, any value other than 1 could
+lead to a non-physical answer in the simulation. Please see section
+\ref{sec:theory} for a more detailed explanation.
+
+The \texttt{Element\_x\_frac} values for each group are all summed together
+and then normalized to this sum. This same procedure is done for all
+isotopic values within an element's list. For example, consider the group
+\texttt{gUF4} defined below, it is composed of 20\% uranium and 80\% fluorine.
+The fluorine is permitted to have any combination of fluorine isotopes while
+the uranium in this group is specified to be 5\% \ce{^233U} and 95\% \ce{^238U}.This is an example of method C of group definition.
+
+\begin{li}
+grp gUF4
+U   1   isos    2
+U-233   5
+U-238   95
+F   4
+\end{li}
+
+The group \texttt{gFLiBe} is defined below as an example of method A, group
+\texttt{gUF3} is defined below as an example of method B, while group
+\texttt{gUF} is defined below as an example of method D. These groups will be
+used throughout this manual in examples. 
+
+\begin{li}
+grp gFLiBe
+Li  71.7
+Be  16
+F   103.7
+
+grp gUF3
+F   3   isos    1
+F-19    1
+U   1   isos    1
+U-233   1
+
+grp gUF sum
+gUF4    1
+gUF3    1
+\end{li}
+
+\textit{The following paragraphs assume some level of familiarity with ADER and
+will likely be unclear until sections \ref{sec:conditions_blocks} and 
+\ref{sec:streams} have been reviewed.}
+
+Groups are used to define four structures in ADER; ranges, ratios, streams, and
+summation groups. These structures are covered in later sections of this manual
+but their interaction with groups requires a comment here. When a group is
+used in a range or ratio structure, or is used in a summation group which is
+part of a range or ratio structure, and this structure is attached to a material
+by a conditions block, the group in question is added to the material's list
+of possible recipes. These recipes are the options into which the material's
+constituent isotopes may be sorted during the optimization step, discussed
+in section \ref{sec:theory_opt}. Range and ratio structures, in the same
+material, make use of the same group list. That is to say, in the following
+example seen below, in which the conditions block \texttt{example\_block} is
+attached to the material \texttt{FuelSalt}, 
+the group \texttt{gFLiBe} must \textbf{both} be 
+between 20 and 80\% of \texttt{FuelSalt}'s atomic density \textbf{and} be 
+four times
+as abundant as the group \texttt{gUF4}. There are \textbf{not} now two copies of
+the group \texttt{gFLiBe} assigned to the material \texttt{FuelSalt}.
+The \texttt{rng} and \texttt{rto} structures each refer to the \textbf{same} 
+group  within a single material, 
+in this instance the material \texttt{FuelSalt}.
+
+\begin{li}
+conditions example_block
+rng gFLiBe min 0.2 max 0.8
+rto gFLiBe val 4 grp2 gUF4
+
+mat FuelSalt -2.805 vol 1 burn 0 ader cnd example_block
+3006.06c    0.00028
+...
+\end{li}
+
+The groups used to define group-class streams are used solely as recipes. 
+The groups used to define group-class streams \textit{only} specify the
+relative proportions of the mass carried by the stream in question. For a
+stream to be connected to a material, that material \textit{does not} need to
+have that group in its list of possible recipes. For instance, 
+\texttt{FuelSalt}
+to which the conditions block above, \texttt{example\_block}, is attached could
+be the sink for a group-class stream defined using the group \texttt{gLi}, a 
+group of elemental lithium, even though there is no usage of the group
+\texttt{gLi} in the conditions block \texttt{example\_block}. A group-class
+stream's usage of a group only stipulates what proportions the mass that
+stream carries must have. If the mass the stream carries originates from a 
+material the isotopes which compose the stream's load may come from any group
+or no group at all inside of that material. If the mass the stream carries
+ends in a material the isotopes entering the material may go into any group into
+which they fit the recipe, or no group at all if the isotope is not a
+``controlled" isotope - a topic discussed in section \ref{ssec:control}.
+
+Again, the groups defined using the \texttt{grp} keyword are only recipes. A
+given recipe can be used to define multiple structures. Streams all create
+their own copy whereas range and ratio restrictions in the same material refer
+to the same group in a material's recipe list. As an example, in the input
+below, there exist four digital versions of the group \texttt{gFLiBe}, the
+original \texttt{grp} recipe, the group which has been added to the material
+\texttt{FuelSalt}'s recipe list, and each group created for each stream; and
+while these two streams represent two distinct stream objects, the optimization
+line seen in the conditions block will minimize the \textit{sum} of the two
+streams because they have each been defined with a group of the same name.
+
+\begin{li}
+grp gFLiBe
+Li  71.7
+Be  16
+F   103.7
+
+conditions example_block
+rng gFLiBe min 0.2 max 0.8
+rto gFLiBe val 4 grp2 gUF4
+opt dir min type spec_stream gFLiBe
+
+mat FuelSalt -2.805 vol 1 burn 0 ader cnd example_block
+3006.06c    0.00028
+...
+
+stream to FuelSalt type feed form cont group gFLiBe
+stream to FuelSalt type reac form disc group gFLiBe
+\end{li}
+
+\subsection{Quick Reference}\label{ssec:group_qr}
+
+\begin{itemize}
+    \item{The proportions of elements within a group are normalized to unity.}
+    \item{The proportions of isotopes within an element are normalized to unity.}
+    \item{Only isotopes belonging to the same element may be listed as a
+            component isotope of that element.}
+    \item{General Input Structure where \texttt{Element\_x} must be the
+            alphabetic periodic table designation for the element, and
+            \texttt{iso\_x} must be the alphabetic periodic table
+            designation for the parent element followed by a dash
+            and then the atomic number of the isotope in question. The value
+            which follows a group name in method D of defining a group may
+            be any value greater than 0; however, any value other than 1 
+            could generate a non-physical answer for a given simulation.
+\begin{lt}
+grp [Name] <sum> [{Element_1; group_1}] [{Element_1_frac; 1}] ...
+<isos> (num_isos) (iso_1) (iso_1_frac) <iso_n> (iso_n_frac) ...
+<{Element_n; group_n}> [{Element_n_frac; 1}] ...
+<isos> (num_isos) (iso_1) (iso_1_frac) <iso_n> (iso_n_frac) ...
+\end{lt}
+        }
+\end{itemize}

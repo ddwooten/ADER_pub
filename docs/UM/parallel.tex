@@ -1,0 +1,16 @@
+ADER has been developed for threaded operation with the OpenMP interface just
+as SERPENT2 has. To run ADER with more than one thread do the same thing
+SERPENT2 asks, add the input seen below to the command line executing the
+SERPENT2 run. This will enable threaded computation for SERPENT2 as a whole
+as well, and this input does not need to be duplicated for both SERPENT2 and
+ADER to run in a threaded manner - only one instance of this command line option
+should be used.
+
+\begin{lt}
+-omp [num_threads]
+\end{lt}
+
+ADER is not compatible with distributed memory computing - i.e. while SERPENT2
+can do MPI runs, SERPENT2 with ADER can not. The code as a whole may be
+compiled in a way to run with MPI but only non-ADER simulations can be run with
+MPI.

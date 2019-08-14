@@ -1,0 +1,25 @@
+With regards to parallel computation there are two key facts: ADER is able to
+take advantage of shared-memory parallelization through the OpenMP interface,
+and ADER is unable to make use of distributed-memory parallelization which for
+SERPENT2 is hanlded through the MPI interface. There is no inherent reason ADER
+can not function inside of a distributed-memory environment - that capability
+simply does not yet exist. \\
+Speaking to shared memory parallization, many functions which are part
+of the ADER suite are used in a threaded manner but are not labeled as
+thread-safe. This is because much of ADER's parallization happens on a
+per-cluster basis, each thread is given one cluster of materials to work with;
+that work being building or solving a matrix. Many of these threaded functions
+would fail to work as intended if they were not parallelized by the material
+cluster which they are operating on. Only those functions which are fully
+thread-safe, generally those which do not alter program memory, are labeled as
+such. There are two branching points for ADER threads. In
+\texttt{ADERCorrectTransportCycle} each material cluster is handed off to a
+thread which will then fill and solve the cluster composition optimization
+problem. Following the solution of these composition matrices a
+OpenMP barrier prevents any thread from moving forward until
+all threads have solved all their optimization problems afterwhich program flow
+is reduced back down to a single thread. In 
+\texttt{ADERProcessMaterialAderData} each material is handed off to a thread
+which then proceeds to fill in that material's composition matrix information.
+Again, an OpenMP barrier prevents program continuation past this point until
+control is returned back to a single thread. 

@@ -1,0 +1,125 @@
+% ------ Created April, 02, 2018, by Daniel D. Wooten
+% ------ Comments:
+% ------ << 
+% ------ > 
+% ------ >> 
+
+set title "10_Test"
+
+% --- Surfaces 
+
+% ------ Reactor Core
+surf    1       sph    0        0       0       600
+
+% --- Cells
+cell    11      0       TestMaterial   -1
+cell    21      0       outside         1 
+
+% --- Materials
+
+mat TestMaterial 1.0 vol 9.047787E08 ader burn 0 cnd TestConditions
+1001.06c        0.5 
+1002.06c        0.0
+2004.06c        0.0
+92235.06c       0.5
+
+% ------ Groups
+
+grp g1
+H     1 isos 1
+H-2 1
+He  1   isos 1
+He-4    1
+
+grp H2
+H   1   isos 1
+H-2     1
+
+grp He4
+He  1   isos  1
+He-4    1
+
+% ------ End of Groups
+
+% ------ Conditions section
+conditions TestConditions
+rng H2 min 0.5 max 1.0 
+rng He4 min 0.4 max 1.0 
+opt dir min type action redox
+ 
+% ------ End of Conditions Section
+
+% ------ Begining of Feed/Removal/Redox/Reac section
+
+stream to TestMaterial group g1 type redox form cont 
+
+% ------ End of Streams 
+
+% ------ Table-class stream definitions
+
+% ------ End of table-class definitions
+
+% ------ ADER Transport Cycle Iteration Maximum
+set ader_trans_iter 1
+
+% ------ ADER Negative ADENS Criteria
+ 
+% --- Cross section library file path
+
+set acelib "/home/ddwooten/Documents/RSICC_CODES/SERPENT_1/XSDATA/endfb7/sss_endfb7u.xsdata"
+set declib "/home/ddwooten/Documents/RSICC_CODES/SERPENT_1/XSDATA/endfb7/sss_endfb7.dec"
+set nfylib "/home/ddwooten/Documents/RSICC_CODES/SERPENT_1/XSDATA/endfb7/sss_endfb7.nfy"
+
+% --- Boundary condition
+
+set bc 1 
+
+% --- Neutron population and criticality cycles:
+
+set pop 500 20 20 
+
+% --- Fission Product Cut Off
+
+set fpcut 1E-6
+
+% --- Stable Nuclide Cut Off
+
+set stabcut 1E-12
+
+% --- Set Burnup Solution Method ( CRAM )
+
+set bumode 2 
+
+% --- Set Predictor Corrector Usage
+
+set pcc "LELI" [1 1] 
+
+% --- Set flux for burnup
+
+set flux 1E+13
+
+% --- Set Inventory for Burnup Report
+
+set inventory all
+
+% --- Set xscalc mode
+
+set xscalc 1
+
+% --- Set materials printing mode
+
+set printm 1
+
+% --- Set Optimization Mode
+
+set opti 1
+
+% --- Bunup Intervals
+
+dep daystep
+1
+
+
+% --- Plot
+
+%plot 3 500 500

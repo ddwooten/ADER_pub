@@ -1,0 +1,447 @@
+Streams are the structures by which ADER moves mass into, out of, and between
+SERPENT2 materials. Streams are defined as seen below\ldots
+
+\begin{lt}
+stream <to> (name_of_sink_material) <from> (name_of_source_material)
+    [type] [{feed; reac; redox; remv}] [{group; rem}] [name] 
+    [form] [{cont; disc; prop}] (frac) (frac_value)
+\end{lt}
+
+The \texttt{to} and \texttt{from} entries specify the stream's source and
+sink for the mass which the stream moves. Sources and sinks which are given 
+must be valid SERPENT2 materials. Streams do not require \textit{both} a source
+and a sink, but rather, at least \textit{one} of either a source or sink. In
+the case of a missing source the mass which is brought into the sink material
+is assumed to 
+come from an infinite, non-reactive (chemically and neutronically) supply
+existing outside the simulation bounds. In the case of a missing sink the
+mass which is removed from the source material is assumed to disappear - it
+leaves the simulation boundary. 
+
+Streams which have elements with unspecified isotopic compositions take these
+element's isotopic compositions to be equal to that of the elements in the 
+source material at the beginning of the burnup step. These proportions are
+updated on each ADER criticality search to account for the changes possibly
+induced by discrete form streams. Streams which have elements
+with unspecified isotopic compositions and a valid SERPENT2 material as a sink
+must have a valid SEPRENT2 material as a source.
+
+Material clusters are collections of SERPENT2 materials which are connected
+via streams. If a stream connects two materials, having a valid SERPENT2
+material for each source and sink, these two materials become part of the same
+material cluster. Because materials may have streams coming from and going to
+many other materials, not all materials in a material cluster will be directly
+connected by streams; rather, some materials in a material cluster may happen to only
+be connected to one another through a series of intermediate streams and
+materials. Materials in the same cluster share an optimization solution, that
+is, their compositions are optimized collectively according to the singular
+optimization target provided, discussed in section \ref{ssec:optimization}. 
+Of less impact to the user, material clusters also share a collective
+burnup solution though each material may have its own flux and cross sections.
+Materials in the same cluster must have the same initial isotopes listed in
+their definitions whether or not these isotopes exist in each material at the
+beginning of the simulation. If an isotope needs to be listed in a material for
+which its concentration is zero, simply include the isotope in the material's
+definition with a zero value next to its ZAI identifier.
+
+The \texttt{type} entry has no effect on stream behavior or implementation.
+Rather, it serves only as a tag for the \texttt{opt} entries ( discussed
+in section \ref{ssec:optimization} ) and as a possible organizational tool
+for the user.
+
+The following choice of keywords, \texttt{group} and \texttt{rem}, highlights
+the most important distinction between streams; the difference between
+group-class (\texttt{group}) and table-class (\texttt{rem}) streams.
+While the details of this distinction will be covered in depth in the following
+subsections it is sufficient to say, for now, that group-class streams move mass
+which follows the recipe outlined by a group while table-class streams move
+mass of which the proportions are determined using a table, a \texttt{removal}
+table (covered in section \ref{ssec:rem}). Last but not least, an
+additional distinction is that group-class streams are variables, the amount of
+mass which they move is determined by solving the material optimization problem,
+discussed in section \ref{ssec:theory_opt} while table-class streams move a
+fixed amount of mass according to user input. Group-class streams have the name
+of a group following the keyword \texttt{group} while table-class streams have
+the name of a removal table following the keyword \texttt{rem}.
+\textbf{Table-class streams can be used to feed mass into a material. The use
+of the keyword \texttt{removal} is a legacy-term and does not explicitly mean 
+\textit``{removal}" in the sense of the English word}.
+
+The \texttt{form} keyword and its associated values, \texttt{cont},
+\texttt{disc} and \texttt{prop}, designate how a stream behaves in time. The
+optimization solution, as discussed in section \ref{ssec:theory_opt}, determines
+the total mass transfers from the group-class streams interfacing with a material
+cluster needed to bring the materials in the material cluster to their optimal
+composition. How this mass is moved over time is up to the user through the use
+of the \texttt{form} keyword. Streams designated as \texttt{cont} are
+``continuous" streams. These streams move mass throughout a burnup step at a
+constant rate per second. Streams designated as \texttt{disc} are ``discrete"
+streams. These streams move mass as an instantaneous input happening before a
+burnup step begins. Streams designated as \texttt{prop} type streams are
+``proportional" streams and their method of mass transfer is discussed in
+greater detail in the following sections, \ref{sssec:pgroup} and 
+\ref{sssec:prem}.
+
+The \texttt{frac} keyword and its associated value are discussed in sections
+\ref{ssec:group} and \ref{ssec:rem}.
+
+An important note, mentioned in several spots throughout this manual, is that
+only ``disc" form streams impact ADER's reactivity iteration scheme. If ADER
+is instructed to iterate on the material composition to match user specified
+reactivity targets, ADER will only apply the actions of discrete form streams
+on each iteration. Any continuous and proportional streams will not have
+their effects on material reactivity incorporated until after the current burnup
+step is complete. Additionally, any given material constraint may be out of
+bounds during some point in a burnup step if streams of mixed type are used
+together as the optimal conditions for the material rely on the full impact
+of all streams. As a closing reminder, ADER \textit{does not} account for
+nuclear burnup in the \textit{current} burnup step. The effects of nuclear
+burnup on composition are assessed by ADER at the beginning of the next
+burnup step - i.e. ADER does not predict the effects of nuclear burnup.
+
+\subsection{Group-class streams}\label{ssec:group}
+
+Group-class streams, those streams using the keyword \texttt{group},
+operate differently from table-class streams. Group-class
+streams are options, given by the user to ADER, for moving mass. As discussed
+in section \ref{sec:theory} the amount of mass moved by group-class streams
+is determined by the optimization solution. That is, the content of group-class
+streams is determined so that the optimal material composition for the material
+cluster may be realized.
+
+The mass which a group-class stream moves is described by the
+group named after the \texttt{group} keyword. This named group describes the
+proportions the mass the stream carries must have. The amount of mass is
+determined by the optimization solution. The optimization solution operates on
+a volume normalized basis. As such, take the initial units of any solution for
+a stream value to be\footnote{Developers note: The actual units of stream return
+ values in the code are $\frac{\text{\texttt{atoms}}}{cm \cdot barn}$}
+ $\frac{\text{\texttt{atoms}}}{cm^{3}}$ where
+``\texttt{atom}" represents a unit of the group-class stream. This unit
+is composed of fractional isotopes in accordance with the recipe of the 
+group-class stream. 
+Take this value to be denoted $s_{n:x}$ where $n$ denotes different
+streams and $x$ takes on either $c$, $d$, or $p$ representing continuous,
+discrete, and proportional form streams.
+
+Group-class streams do not make use of the \texttt{frac} keyword and as such
+their input template appears as follows\ldots
+
+\begin{lt}
+stream <to> (name_of_sink_material) <from> (name_of_source_material)
+    [type] [{feed; reac; redox; remv}] [group] [name] 
+    [form] [{cont; disc; prop}] 
+\end{lt}
+
+\subsubsection{Continuous group-class streams}\label{sssec:cgroup}
+Continuous group-class streams move an equal amount of mass per unit time over
+the length of a burnup step. Taking $\Delta t$ to be the total number of seconds
+in the current burnup step continuous group-class streams deliver or remove 
+$c_{n} \frac{\text{\texttt{atoms}}}{cm^{3}s}$ to their sink or source material's
+respectively where $c_{n}$ is defined in equation \ref{eq:cont_value}.
+
+\begin{equation}\label{eq:cont_value}
+c_{n} = \frac{s_{n:c}}{\Delta t}
+\end{equation} 
+
+As an example consider below the continuous group-class stream formed using
+the \texttt{gFLiBe} group from section \ref{sec:groups} for which there is
+no source and for which the sink is the material \texttt{FuelSalt}.
+
+\begin{li}
+stream to FuelSalt group gFLiBe form cont type feed 
+\end{li}
+
+\subsubsection{Discrete group-class streams}\label{sssec:dgroup}
+Discrete group-class streams move their entire mass load, $s_{n:d}$, 
+collectively
+and instantaneously following the optimization solution and before the 
+transport sweep preceding the burnup calculation. With further detail
+available in section \ref{sec:theory} discrete group-class streams have a 
+unique aspect different from all other streams. Every burnup step ADER
+iterates over the optimization solution and a transport sweep until 
+the system analog neutron multiplication factor, $k_{eff}^{analog}$, is within
+user defined bounds. Every time an optimization solution is arrived at, if
+there are discrete streams, these streams will have some value $s_{k,n:d}$ 
+where
+$k$ denotes the current iteration over the optimization solution for the current
+burnup step. The changes in material composition induced by these discrete
+stream flows, $s_{k,n:d}$, are applied before the next transport sweep meaning
+that the system compositions reflect the actions of discrete group-class
+streams. Should another solution of the optimization problem, for the same 
+burnup step, be required, the changes induced by these discrete group-class
+stream flows, $s_{k,n:d}$, are not undone. Rather, the final $s_{n:d}$ value
+reported for discrete group-class streams per burnup step is given by
+equation \ref{eq:disc_s}.
+
+\begin{equation}\label{eq:disc_s}
+s_{n:d} = \sum_{k}^{K} s_{k,n:d}
+\end{equation}
+
+As an example of a discrete group-class stream consider the stream below
+formed using the group \texttt{gUF4}, again, with no source but the material
+\texttt{FuelSalt} as the sink.
+
+\begin{li}
+stream to FuelSalt group gUF4 form disc type reac
+\end{li}
+
+\subsubsection{Proportional group-class streams}\label{sssec:pgroup}
+Proportional group-class streams attempt to move mass in proportion to the mass
+already present. Proportional group-class streams approximate a decay-like
+proportional constant, $\lambda_{i,n:p}$, which in a system with no other
+effects acting on isotope concentration, would lead to the desired change
+in the isotope's, $i$, concentration. 
+This is almost never the case in an ADER
+simulation and as such the realized change in an isotope's concentration will
+likely be different from the desired amount of change. As such, the values
+reported in the output by ADER for all proportional streams, group-class or
+table-class, are calculated exactly during the burnup solution such that they
+reflect the actual amount of the isotope moved, not the pre-calculated amount
+which is likely different. Regardless, considering the role that group-class
+streams tend to play in ADER simulations the usage of proportional group-class
+streams should be undertaken with great caution and a thorough understanding
+of how the simulation parameters will interact to affect the proportional
+group-class stream constants. Proportional group-class streams may not be
+formed using summation groups.
+
+For a proportional stream removing a quantity, $s_{n:p}$, from a material, $m$,
+the isotopic proportional constants, $\lambda_{i,n:g}$ for isotope $i$ as
+modified by group stream $n$ are calculated, before the burnup step
+and \textit{after} the application of any discrete stream effects ( such that
+the proportional constants are calculated from the updated material composition
+values ), as seen below in equation \ref{eq:prop_remv} where
+$f_{i,n:p}$ is the proportion of the stream $n$ accounted for by isotope
+$i$, $\rho_{m,k=0}$ is the source material atomic density at the beginning
+of the zeroth iteration before any discrete stream actions have been applied to
+any materials, $N_{i}$ is the current atomic density of isotope $i$, and
+$\Delta t$ is the total time of the current burnup step. In the case of a
+desired 100\% removal of an isotope ADER approximates the term
+$(s_{n:p} f_{i,n:p} \rho_{m,k=0} N_{i}^{-1})$ as $(1 - 10^{-8})$.
+
+\begin{equation}\label{eq:prop_remv}
+\lambda_{i,n:g} = ln(1 - s_{n:p} f_{i,n:p} \rho_{m,k=0} N_{i}^{-1})
+    (\Delta t)^{-1}
+\end{equation}
+
+For a proportional stream adding a quantity of mass to a material the isotopic
+proportional constants are calculated, before the burnup step
+and \textit{after} the application of any discrete stream effects ( such that
+the proportional constants are calculated from the updated material composition
+values ), as seen below in equation \ref{eq:prop_add}.
+
+\begin{equation}\label{eq:prop_add}
+\lambda_{i,n:g} = ln(1 + s_{n:p} f_{i,n:p} \rho_{m,k=0} N_{i}^{-1})
+    (\Delta t)^{-1}
+\end{equation}
+
+During the construction of the burnup matrix, discussed in section
+\ref{ssec:burn} these proportional constants are
+added to the respective decay constants of the isotopes they seek to modify.
+
+As an example of a proportional group-class stream consider the stream below
+formed using the \texttt{gUF4} group and using material \texttt{FuelSalt} as a
+source, having no sink.
+
+\begin{li}
+stream from FuelSalt group gUF4 form prop type remv
+\end{li}
+
+\subsection{Table-class streams}\label{ssec:rem}
+Table-class streams, unlike group class streams, are directions from the user to
+ADER to move a specific quantity of mass in a specific manner. A stream is
+classified as a table-class stream when the keyword \texttt{rem} is used in
+the stream definition. This keyword is always followed by the name of 
+a \texttt{removal} table. \textbf{The use of the word ``removal" for the name
+of this structure is an artifact from earlier code development. These tables
+can be used to move mass into, out of, and between SERPENT2 materials. The
+materials listed as their \texttt{to} and \texttt{from} entries, sink and
+source respectively, operate as sink and source respectively. The name of this
+structure \texttt{removal} has no relation to the English word ``removal" other
+than spelling.} Removal tables are defined elsewhere in the code using the
+format below where elements are entered using their alphabetic periodic table
+designation, so \texttt{U} for uranium, while isotopes are entered as elements
+followed by \texttt{-A} where A is the atomic number of the isotope; 
+\texttt{U-235} for \ce{^{235}U}.
+
+\begin{lt}
+removal [Name]
+[element_or_isotope_1] [table_value]
+...
+<element_or_isotope_n> (table_value) 
+\end{lt}
+
+Both elements and isotopes may be entered in the same removal table. If a 
+\texttt{table\_value} ,$q$, is entered for both an element and one or more of 
+its constituent isotopes, the isotopes for which a \texttt{table\_value} was 
+entered will retain their corresponding value rather than be overwritten by 
+their parent element's value - i.e. an elemental \texttt{table\_value} is a 
+default
+for all child isotopes of that parent element but this default is overwritten
+by any entry for a child isotope. All $q$ values must be greater than or equal
+to zero.
+
+As an example, consider the removal table seen below. In this removal table,
+\texttt{rem\_table}, all isotopes, $i$, of uranium have an associated 
+$q_{i}$ value of 0.1, except for \ce{^{233}U} which has a $q_{i}$ value of zero.
+
+\begin{li}
+removal rem_table
+U     0.1
+U-233 0.0
+\end{li}
+
+A single removal table may be used to define multiple streams, each of which
+will implement the removal table in its own designated fashion.
+
+All table-class streams require the use of the keyword \texttt{frac} and the
+input of its associated value which must be equal to or greater than zero. 
+As such the input template for table-class streams appears as such\ldots
+
+\begin{lt}
+stream <to> (name_of_sink_material) <from> (name_of_source_material)
+    [type] [{feed; reac; redox; remv}] [rem] [name] 
+    [form] [{cont; disc; prop}] [frac] [frac_value]
+\end{lt}
+
+\textbf{In the following subsections many equations and parameters will depend on a
+material value such as density or volume. All material values in reference to
+table-class streams are taken at the source material if there is one. If there
+is no source material these material values are taken at the sink material.}
+
+\subsubsection{Continuous table-class streams}\label{sssec:crem}
+Continuous table-class streams move $s_{n:c}$ amount of material every burnup
+step where $s_{n:c}$ is defined by equation \ref{eq:cont_table} where
+$q_{i,n:c}$ is the \texttt{table\_value} given for isotope $i$ by the removal
+table used to create stream $n$, $N_{i}$ is the number density for that isotope 
+(taken after the effects of discrete streams have been applied), $r_{n}$ 
+is the \texttt{frac\_value} given for stream $n$, and $V_{m}$ is the material
+volume. 
+
+\begin{equation}\label{eq:cont_table}
+s_{n:c} = V_{m} \sum_{i}^{I} q_{i,n:c} r_{n} N_{i}
+\end{equation}
+
+From equation \ref{eq:cont_table} it is clear that the product of a value from
+a removal table and the value given for the stream's \texttt{frac} entry is the
+percentage, by atomic density, of that removal table entry to move during 
+each burnup step. 
+Continuous table-class streams move this mass evenly over time. The transfer
+rate, $h_{i} \frac{\text{\texttt{atoms}}}{s^{-1}}$ for isotope $i$ is given by 
+equation \ref{eq:cont_iso} where $\Delta t$ is the length of the current burnup 
+step in seconds.
+
+\begin{equation}\label{eq:cont_iso}
+h_{i} = V_{m} q_{i,n:c} r_{n} N_{i} \Delta t^{-1}
+\end{equation}
+
+It is important to remember that isotopes derive their $q_{i,n}$ values from
+their parent element's $q_{e}$ value given in the removal table used
+to define stream $n$ unless the isotope in question was given its own
+$q_{i}$ value in the same removal table.  
+
+As an example of a continuous table-class stream consider the following\ldots
+
+\begin{li}
+stream from FuelSalt rem rem_table type redox form cont frac 1000
+\end{li}
+
+\subsubsection{Discrete table-class streams}\label{sssec:drem}
+Discrete table-class streams move $s_{n:d}$ amount of material every burnup
+step where $s_{n:d}$ is defined by equation \ref{eq:disc_table} where
+$q_{i,n:d}$ is the \texttt{table\_value} given for isotope $i$ by the removal
+table used to create stream $n$, $N_{i}$ is the number density for that isotope 
+(taken before the effects of discrete streams have been applied), and $r_{n}$ 
+is the \texttt{frac\_value} given for stream $n$.  
+
+\begin{equation}\label{eq:disc_table}
+s_{n:d} = V_{m} \sum_{i}^{I} q_{i,n:d} r_{n} N_{i}
+\end{equation}
+
+From equation \ref{eq:cont_table} it is clear that the product of a value from
+a removal table and the value given for the stream's \texttt{frac} entry is the
+percentage of that removal table entry to move during each burnup step. 
+Discrete table-class streams move this mass instantaneously at the beginning
+of each burnup step. The transfer
+amount, $h_{i}$ for isotope $i$ is given 
+by equation \ref{eq:disc_iso} where $\Delta t$ is the length of the current burn
+up step in seconds.
+
+\begin{equation}\label{eq:disc_iso}
+h_{i} = V_{m} q_{i,n:c} r_{n} N_{i} \Delta t^{-1}
+\end{equation}
+
+It is important to remember that isotopes derive their $q_{i,n}$ values from
+their parent element's $q_{e}$ value given in the removal table used
+to define stream $n$ unless the isotope in question was given its own
+$q_{i}$ value in the same removal table. With regards to discrete stream
+behavior throughout ADER criticality iterations, the effects of discrete
+table-class streams are applied on the zeroth iteration for each burnup step,
+and no more than that.
+
+As an example of a discrete table-class stream consider the following\ldots
+
+\begin{li}
+stream to FuelSalt rem rem_table type feed form disc frac 0.234
+\end{li}
+
+\subsubsection{Proportional table-class streams}\label{sssec:prem}
+Proportional table-class streams \textit{do not} move a specific quantity of
+material in a burnup step. Rather, proportional table-class streams modify the
+decay constant of the isotopes in question - this modification may be slight
+or may even be of a magnitude to turn a decay constant into a production
+constant. The stream-constants, $\lambda_{i,n:t}\frac{1}{s^{-1}}$ for 
+isotope $i$ as modified by table-class stream $n$ are determined according to 
+equation \ref{eq:stream_cont}.
+
+\begin{equation}\label{eq:stream_cont}
+\lambda_{i,n:t} = q_{i,n:p} r_{n} 
+\end{equation}
+
+Concerning the inclusion of $\lambda_{i,n:t}$ into the burnup matrix, while this
+is covered in detail in section \ref{ssec:burn}, it is sufficient to say for now
+that $\lambda_{i,n:t}$ is added to the isotope's decay constant if there
+is no source material, this isotope being in the sink material. If there is a
+source material $\lambda_{i,n:t}$ is subtracted from the source isotope's decay
+constant and this production term is added to the isotope in the sink material
+such that the transfer rate is dependent on the source material
+isotopic concentration.
+
+As an example of a proportional table-class stream consider the following\ldots
+
+\begin{li}
+stream from FuelSalt rem rem_table type remv form prop frac 1.0
+\end{li}
+
+\subsection{Quick Reference}
+\begin{itemize}
+\item{Streams are defined as follows\ldots
+\begin{lt}
+stream <to> (name_of_sink_material) <from> (name_of_source_material)
+    [type] [{feed; reac; redox; remv}] [{group; rem}] [name] 
+    [form] [{cont; disc; prop}] (frac) (frac_value)
+\end{lt}
+    }
+\item{Removal tables are defined as follows\ldots
+\begin{lt}
+removal [Name]
+[element_or_isotope_1] [table_value]
+...
+<element_or_isotope_n> (table_value) 
+\end{lt}
+    }
+\item{Streams require a source or a sink. They may have both, but both are not
+required.}
+\item{Streams with elements lacking an isotopic composition derive the
+element's isotopic composition from the source material.}
+\item{Streams with elements lacking an isotopic composition AND with a valid
+SERPENT2 material as a sink MUST have a valid SERPENT2 material as a source.}
+\item{Material clusters are collections of materials which are connected by
+ADER streams}
+\item{Group-class streams change their delivered mass each burnup step
+according to the optimization solution.}
+\item{Table-class streams move user-defined quantities of mass each burnup
+step}
+\item{Proportional group-class streams may not be formed using summation 
+    groups.}
+\end{itemize}

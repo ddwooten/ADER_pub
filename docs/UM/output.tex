@@ -1,0 +1,142 @@
+ADER output is located in the ``[\texttt{input\_file\_name}]\_dep.m" output file
+which SERPENT2 produces. Every material under ADER control with groups assigned
+via a conditions block or streams, will have output in this file. 
+
+\subsection{Groups}\label{ssec:output_groups}
+The 
+fraction of a material's atomic density accounted for by each group is printed
+out in a vector with the name of ``\texttt{MAT\_m\_GRP\_g\_FRAC}" where 
+\texttt{m} is the material name and \texttt{g} is the group name for a group 
+which is a member of a material's options list - see section \ref{sec:groups}
+for a description of this list. The value at index $j$ of such a vector
+corresponds to the value at the end of burnup step $j$. The values displayed
+are normalized to the material's atomic density at the beginning of the 
+burnup step. 
+
+For example, consider if the group \texttt{gFLiBe} accounted for 60\% of the
+material \texttt{FuelSalt}'s atomic density during each of two burnup steps.
+The corresponding output line in the ``\_dep.m" file would appear as below\ldots
+
+\begin{li}
+MAT_FuelSalt_GRP_gFLiBe_FRAC = [
+4.00000E-01, 4.00000E-01 ];
+\end{li} 
+
+Summation groups and their component groups are all reported, in no particular
+order in the output.
+
+\subsection{Streams}\label{ssec:output_streams}
+The mass moved by a stream on each burnup step $j$ is given in vector form
+where the vector is named ``\texttt{MAT\_m\_STREAM\_s\_STEP\_AMT}" where 
+\texttt{m} is the material name and \texttt{s} is the name of the group or
+removal table used to define the group-class or table-class stream in question,
+respectively. Results for streams with both a valid sink and source are 
+reported by each the sink and the source.
+Each vector index $j$ corresponds to burnup step $j$. The units
+for stream output are $\frac{\text{\texttt{atoms}}}{barn \cdot cm}$ where the 
+value represents
+the stream's impact on a per unit volume basis with the normalizing volume being
+the material volume for which the stream is reported. This means that if a given
+stream moves mass between materials of differing volumes, each material will
+report a different value for that stream for each burnup step because their
+volumes are different - all thanks to the conservation of mass. In the same
+context of \texttt{atoms} from section \ref{sec:groups}, \texttt{atoms} in this
+sense refers to a fractional mix of isotopes corresponding to the recipe of the
+stream in question. For group-class streams these ``atomic" units will have
+the proportions that the group recipe does - this is not necessarily the case
+for proportional group-class streams which have a bevy of cautions regarding
+their use presented in section \ref{sssec:pgroup}. For table-class streams these
+``atomic" units take the proportional make up of the table used to define the
+stream except in the case of proportional table-class streams in which case 
+the ``atoms" reported is just that, total atoms. The exact composition of
+such a stream is not given.
+Proportional
+type streams do report a true value, in the sense that the number of atoms is
+correct, in that the value accounts for nuclear depletion effects.
+This value is calculated inside the burnup calculation as what is sometimes
+referred to as a ``ghost" nuclide - a false nuclide who's only impact on the
+solution is to track and measure some parameter of interest, in this case the
+true amount of mass moved by a proportional stream, group-class or table-class.
+
+As an example, consider if stream \texttt{gUF4} had moved 
+$0.001 \frac{\text{\texttt{atoms}}}{barn \cdot cm }$ per unit volume into 
+material \texttt{FuelSalt} on each of two burnup steps - so  
+$0.0002 \frac{\text{\texttt{atoms}}}{barn \cdot cm }$ of uranium and 
+$0.0008 \frac{\text{\texttt{atoms}}}{barn \cdot cm }$ of fluorine. 
+The corresponding output line in the ``\_dep.m" file would appear as below\ldots
+
+\begin{li}
+MAT_FuelSalt_STREAM_gUF4_STEP_AMT = [
+1.000000E-02, 1.00000E-02 ];
+\end{li} 
+
+Summation streams and their component streams are all reported in the output
+in no particular order.
+
+\subsection{Quick Reference}\label{ssec:output_qr}
+\begin{itemize}
+\item{Group fractions of a material's atomic density, normalized to the
+material's atomic density at the beginning of the burnup step, are reported in
+a vector with the name of ``\texttt{MAT\_m\_GRP\_g\_FRAC}" where 
+\texttt{m} is the material name and \texttt{g} is the group name.}
+\item{Stream mass transfers are reported on a per unit volume basis of the
+associated material and are reported in 
+the vector named ``\texttt{MAT\_m\_STREAM\_s\_STEP\_AMT}" where \texttt{m}
+is the source or sink material and \texttt{s} is the name of the group or 
+removal table used to define the stream. The units are 
+ $\frac{atoms}{barn \cdot cm}$. }
+\end{itemize} 
+
+\subsection{Developers Output}\label{ssec:output_dev}
+In the advanced compilation options for ADER, \texttt{ADER\_DIAG} and 
+\texttt{ADER\_INT\_TEST}, numerous additional outputs are produced. Any
+person who is making use of these outputs is expected to be familiar with the
+documentation of ADER as well as the source code. As such, only a brief summary
+of the additional files is given for each option. A more thorough understanding
+may be had by inspection of the functions which produce these outputs.
+
+\subsubsection{ADER\_INT\_TEST}\label{ssec:output_dev_int}
+Compiling SERPENT2 and ADER with the ``\texttt{-DADER\_INT\_TEST}" flag will
+cause the following outputs to be produced. In the file name templates given
+\texttt{m} stands for a material name and \texttt{n} is a material cluster 
+number.
+
+\begin{itemize}
+\item{``ADER\_Clp\_Model\_Material\_\texttt{m}\_Conformity.test" - contains an
+element by element comparison of the simplex model in ADER memory with the
+simplex model in CLP memory.}
+\item{``ADER\_Cluster\_Composition\_Matrices.json" - contains all the
+information needed to construct the simplex problem in a json format.} 
+\item{``Cluster\_\texttt{n}\_Material\_Composition\_Matrix.csv" - contains every
+entry of the simplex matrix for material cluster \texttt{n}.}
+\end{itemize}
+
+\subsubsection{ADER\_DIAG}\label{sssec:output_dev_diag}
+Compiling SERPENT2 and ADER with the ``\texttt{-DADER\_DIAG}" flag will
+cause the following outputs to be produced. In the file name templates given
+\texttt{m} stands for a material name, \texttt{s} stands for the numeric index
+of a given burnup step, \texttt{ss} stands for the numeric index of the sub-step
+for burnup step \texttt{s}, \texttt{n} is a material cluster number, and 
+\texttt{k} is the index of the criticality search iteration.
+
+\begin{itemize}
+\item{``Cluster\_Parent\_m\_Burn\_Matrix\_Step\_\texttt{s}\_Sub\_Step\_\texttt{ss}.csv" - contains a copy of the burnup matrix for the material cluster who's
+parent is material \texttt{m} for the given burnup step and sub-step.}
+\item{``Cluster\_Parent\_\texttt{m}\_Pred\_Step\_\texttt{s}\_Sub\_Step\_\texttt{ss}\_Matrix\_Comparison.test" - contains a comparison of every compatible entry in
+the burnup matrix as generated by SERPENT2 and ADER for the prediction step
+of a predictor-corrector burnup simulation.}
+\item{``Cluster\_Parent\_\texttt{m}\_Corr\_Step\_\texttt{s}\_Corr\_Sub\_Step\_\texttt{ss}\_Matrix\_Comparison.test" - contains a comparison of every compatible 
+entry in
+the burnup matrix as generated by SERPENT2 and ADER for the corrector step
+of a predictor-corrector burnup simulation.}
+\item{``ADER\_Memory\_Lists.test" - contains \texttt{WDB} address information 
+for a variety of data.}
+\item{``\texttt{m}\_XS\_End\_of\_Step\_\texttt{s}.txt" - contains a comparison 
+of the isotopic cross sections (absorption and fission) between SERPENT2 and 
+ADER after all criticality search iterations for a given burnup step.}
+\item{``\texttt{m}\_XS\_step\_\texttt{s}\_iter\_\texttt{k}.txt" - contains a
+comparison of the isotopic cross sections (absorption and fission) between
+SERPENT2 and ADER for the given burnup step \texttt{s} and inner criticality
+iteration \texttt{k}.}
+\end{itemize}
+

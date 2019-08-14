@@ -1,0 +1,17 @@
+\textbf{Info}: If used in ``receive" mode this function pulls isotopic abundance
+and proportional stream transfer amounts from the burnup problem solution
+vector. If used in ``send" mode this function fills a vector with isotopic
+abundance information and continuous stream injection data. Thread safe. \\
+
+\noindent \textbf{Inputs}:
+\begin{itemize}
+\item{double* ader\_burn\_matrix\_N}
+\item{double* ader\_burn\_matrix\_starts}
+\item{long adj}
+\item{long direction}
+\item{long mat}
+\item{long predictor}
+\item{double total\_time}
+\end{itemize}
+
+\noindent \textbf{Returns}: void

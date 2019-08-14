@@ -1,0 +1,15 @@
+ADER comes complete with a unit test suite and a suite of system tests.
+
+\subsection{Unit Tests}\label{ssec:unit_tests}
+To run ADER's unit tests, compile the code with the ``\texttt{-DADER\_TEST}" 
+flag and run, on a single thread, the input file ``\texttt{test\_input.txt}" 
+found in the ``\texttt{inputs/Test\_Input}" directory with the run option
+``\texttt{-test}". The results of the unit tests will be found in the executing
+directory in a file titled ``\texttt{TestResults.test}".
+
+\subsection{System Testing}\label{sssec:system_testing}
+To run any one of ADER's system tests compile the code anyway except with the
+``\texttt{-DADER\_TEST}" flag. Then, with any number of threads, run any of the
+system test files found in any of the system test directories found in the 
+``\texttt{System\_Testing}" directory. Compare the results with the desired
+results described in the README files.

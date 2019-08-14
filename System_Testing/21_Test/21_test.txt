@@ -1,0 +1,132 @@
+% ------ Created June, 18th, 2018, by Daniel D. Wooten
+% ------ Comments
+% ------ << 
+% ------ > 
+% ------ >> 
+
+set title "21_Test"
+
+% --- Surfaces 
+
+% ------ Reactor Core
+surf    1       sph    0        0       0       300
+
+% --- Cells
+cell    11      0       Tank1          -1
+cell    21      0       outside        1
+
+% --- Materials
+
+mat Tank1 1.0 vol 1.13087335E08 ader burn 0 cnd CTank1 rhow 1.0
+1001.06c        0.1
+9019.06c        0.0
+18040.06c       0.899
+90232.06c       0.0
+92235.06c       0.001
+92238.06c       0.0
+
+% ------ Groups
+
+grp gU235
+U   1   isos    1
+U-235   1
+
+% ------ End of Groups
+
+% ------ Conditions section
+
+conditions CTank1
+rng gU235    min 0.0  max 1.0
+opt dir min type action streams
+
+
+% ------ End of Conditions Section
+
+% ------ Control Section
+
+% ------ End of Control Section
+
+% ------ Begining of Feed/Removal/Redox/Reac section
+
+stream to Tank1  group gU235 type reac form disc
+stream from Tank1 group gU235   type reac   form disc
+ 
+% ------ End of Streams 
+
+% ------ Table-class stream definitions
+
+% ------ End of table-class definitions
+
+% ------ Oxidation Tables
+
+% ------ End of Oxidation Tables
+
+% ------ ADER Negative ADENS Criteria
+ 
+% --- Cross section library file path
+
+set acelib "/home/ddwooten/Documents/RSICC_CODES/SERPENT_1/XSDATA/endfb7/sss_endfb7u.xsdata"
+set declib "/home/ddwooten/Documents/RSICC_CODES/SERPENT_1/XSDATA/endfb7/sss_endfb7.dec"
+set nfylib "/home/ddwooten/Documents/RSICC_CODES/SERPENT_1/XSDATA/endfb7/sss_endfb7.nfy"
+
+% --- Boundary condition
+
+set bc 1 
+
+% --- Neutron population and criticality cycles:
+
+set pop 5000 10 15
+
+% --- Fission Product Cut Off
+
+set fpcut 1E-6
+
+% --- Stable Nuclide Cut Off
+
+set stabcut 1E-12
+
+% --- Set Burnup Solution Method ( CRAM )
+
+set bumode 2
+
+% --- Set Predictor Corrector Usage
+
+set pcc "LELI" [1 1]
+
+% --- Set flux for burnup
+
+set flux 1E+13
+
+% --- Set Inventory for Burnup Report
+
+set inventory all
+
+% --- Set xscalc mode
+
+set xscalc 1
+
+% --- Set materials printing mode
+
+set printm 1
+
+% --- Set Optimization Mode
+
+set opti 1
+
+% --- Bunup Intervals
+
+dep daystep
+100
+100
+100
+
+% ------ ADER Reactivity Targets
+kmin 1.0
+kmax 1.1
+
+% ------ ADER Iteration Set
+set ader_trans_iter 1
+
+% --- Plot
+
+%plot 3 500 500

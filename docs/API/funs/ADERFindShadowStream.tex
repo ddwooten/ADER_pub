@@ -1,0 +1,13 @@
+\textbf{Info}: Searches for a matching stream in a material that is not the
+passed in material. This finds shadow streams and returns the negative index
+of this stream as destination streams receive the \texttt{ptr} to their source
+shadow stream as -1 * index-of-source. Source side streams receive unmodifed
+\texttt{ptr}s to their destination shadow streams. 
+
+\noindent \textbf{Inputs}:
+\begin{itemize}
+\item{long ader\_mat\_stream}
+\item{long mat}
+\end{itemize}
+
+\noindent \textbf{Returns}: long

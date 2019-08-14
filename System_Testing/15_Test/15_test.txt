@@ -1,0 +1,167 @@
+% ------ Created May, 21st, 2018, by Daniel D. Wooten
+% ------ Comments
+% ------ << 
+% ------ > 
+% ------ >> 
+
+set title "15_Test"
+
+% --- Surfaces 
+
+% ------ Reactor Core
+surf    1       sph    0        0       0       300
+surf    2       sph    0        0       601     300
+surf    3       sph    0        0       0       1000
+
+% --- Cells
+cell    11      0       Tank1          -1
+cell    21      0       Tank2          -2
+cell    31      0       void            1 2 -3
+cell    41      0       outside         3 
+
+% --- Materials
+
+mat Tank1 1.0 vol 1.13087335E08 ader burn 0 cnd CTank1
+1001.06c        0.25
+9019.06c        0.0
+18040.06c       0.25
+92235.06c       0.5
+
+mat Tank2 0.5 vol 1.13087335E08 ader burn 0 cnd CTank2
+1001.06c       0.0
+9019.06c       0.5
+18040.06c      0.0
+92235.06c      0.5
+
+% ------ Groups
+
+grp gH
+H   1   
+
+grp gF
+F   1 isos 1
+F-19    1
+
+grp gAr
+Ar  1 isos  1
+Ar-40   1
+
+grp gU
+U   1 isos 1
+U-235 1
+
+grp gArU sum
+gAr  1
+gU   1
+
+% ------ End of Groups
+
+% ------ Conditions section
+
+conditions CTank1
+rto gAr val 2.0  grp2 gH
+cnt ContTank1
+opt dir min type action transfers
+
+conditions CTank2
+oxi oxi_table min -0.25 max 0.0
+
+% ------ End of Conditions Section
+
+% ------ Control Section
+
+control ContTank1
+H
+Ar
+
+% ------ End of Control Section
+
+% ------ Begining of Feed/Removal/Redox/Reac section
+
+stream from Tank1 to Tank2 group gH type redox form disc
+stream from Tank1 rem sAr type remv form cont frac 1.0
+stream to Tank1 group gArU type feed form cont 
+stream to Tank2 group gU type redox form cont
+
+% ------ End of Streams 
+
+% ------ Table-class stream definitions
+
+removal sAr
+Ar   5.78703E-06
+
+% ------ End of table-class definitions
+
+% ------ Oxidation Tables
+
+oxidation oxi_table
+H 2 
+F 2   weight 0.25
+Ar 1   weight 0.0
+U -2
+
+% ------ End of Oxidation Tables
+
+% ------ ADER Transport Cycle Iteration Maximum
+set ader_trans_iter 1
+
+% ------ ADER Negative ADENS Criteria
+ 
+% --- Cross section library file path
+
+set acelib "/home/ddwooten/Documents/RSICC_CODES/SERPENT_1/XSDATA/endfb7/sss_endfb7u.xsdata"
+set declib "/home/ddwooten/Documents/RSICC_CODES/SERPENT_1/XSDATA/endfb7/sss_endfb7.dec"
+set nfylib "/home/ddwooten/Documents/RSICC_CODES/SERPENT_1/XSDATA/endfb7/sss_endfb7.nfy"
+
+% --- Boundary condition
+
+set bc 1 
+
+% --- Neutron population and criticality cycles:
+
+set pop 2000 20 20 
+
+% --- Fission Product Cut Off
+
+set fpcut 1E-6
+
+% --- Stable Nuclide Cut Off
+
+set stabcut 1E-12
+
+% --- Set Burnup Solution Method ( CRAM )
+
+set bumode 2
+
+% --- Set Predictor Corrector Usage
+
+set pcc "LELI" [2 2]
+
+% --- Set flux for burnup
+
+set flux 1E+13
+
+% --- Set Inventory for Burnup Report
+
+set inventory all
+
+% --- Set xscalc mode
+
+set xscalc 1
+
+% --- Set materials printing mode
+
+set printm 1
+
+% --- Set Optimization Mode
+
+set opti 1
+
+% --- Bunup Intervals
+
+dep daystep
+1
+
+% --- Plot
+
+%plot 3 500 500

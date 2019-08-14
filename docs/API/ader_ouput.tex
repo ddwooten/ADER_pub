@@ -1,0 +1,54 @@
+Following the solution of the burnup problem program flow will return to
+\texttt{BurnupCycle}. Following each depletion step \texttt{BurnupCycle} will
+call \texttt{PrintDepOutput} to reproduce ALL of SERPENT2's output each
+burnup step. In a loop over materials \texttt{PrintDepOutput} will call
+\texttt{ADERPrintOutput}. Also included in this section are several ADER
+utility functions that have no impact or use for the casual observer - rather
+many of these functions can be activated via compilation flags to output
+copious amounts of program data that could be useful for debugging or
+optimizing.
+
+\subsection{ADERGetBurnMatrixValue}
+\input{funs/ADERGetBurnMatrixValue}
+
+\subsection{ADERGetTargetRemovalAmount}
+\input{funs/ADERGetTargetRemovalAmount}
+
+\subsection{ADERGetStreamTargetRemovalAmount}
+\input{funs/ADERGetStreamTargetRemovalAmount}
+
+\subsection{ADEROutputBurnMatrixAsCsv}
+\input{funs/ADEROutputBurnMatrixAsCsv}
+
+\subsection{ADEROutputMaterialCompMatrixAsCsv}
+\input{funs/ADEROutputMaterialCompMatrixAsCsv}
+
+\subsection{ADEROutputMaterialCompMatrixData}
+\input{funs/ADEROutputMaterialCompMatrixData}
+
+\subsection{ADEROutputMaterialCompMatrixStreamData}
+\input{funs/ADEROutputMaterialCompMatrixStreamData}
+
+\subsection{ADERPrintCrossSections}
+\input{funs/ADERPrintCrossSections}
+
+\subsection{ADERPrintFinalStepCrossSections}
+\input{funs/ADERPrintFinalStepCrossSections}
+
+\subsection{ADERPrintIndentedOutput}
+\input{funs/ADERPrintIndentedOutput}
+
+\subsection{ADERPrintListsHierarchy}
+\input{funs/ADERPrintListsHierarchy}
+
+\subsection{ADERPrintMaterialStreamIsotopes}
+\input{funs/ADERPrintMaterialStreamIsotopes}
+
+\subsection{ADERPrintOutput}
+\input{funs/ADERPrintOutput}
+
+\subsection{ADERPrintOutputStreamData}
+\input{funs/ADERPrintOutputStreamData}
+
+\subsection{ADERPrintSumStreams}
+\input{funs/ADERPrintSumStreams}

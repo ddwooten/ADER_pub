@@ -1,0 +1,117 @@
+In many nuclear burnup simulations the overall neutron multiplication factor
+of the system in question has some desired value or range it should hold. 
+ADER provides the user the ability to set overall system $k_{eff}^{analog}$
+targets, a minimum and a maximum value, set using the below input. The default
+values for \texttt{kmin} and \texttt{kmax} are zero and $\infty$ respectively.
+
+\begin{lt}
+kmin [minimum_k_value]
+kmax [maximum_k_value]
+\end{lt}
+
+For instance, the below input would place a desired lower bound on
+$k_{eff}^{analog}$ of 1.0 and an upper bound of 1.001.
+
+\begin{li}
+kmin 1.0
+kmax 1.001
+\end{li}
+
+As discussed in section \ref{sec:theory}, ADER only considers the neutron
+multiplication factor of a single SERPENT2 material. This material must be
+designated by the user using the keyword and value pair, \texttt{rhow 1.0},
+in the material's definition line before the list of its constituent isotopes
+such as seen below\ldots
+
+\begin{li}
+mat FuelSalt -2.805 vol 1 burn 0 rhow 1.0 ader
+\end{li}
+
+Also discussed in section \ref{sec:theory} is the ``probability of absorption"
+factor used as an approximation of the effects of the rest of the system outside
+of the singular material considered for criticality control. While a detailed
+discussion of this approach is left to section \ref{sec:theory} for now it 
+will be said
+that this method of assessing criticality in systems is expected to produce
+reasonable and well-behaved results for systems in which there is a single
+material which is both largely responsible for nuclear criticality and weakly
+coupled neutronically to its surroundings.
+
+ADER has a limited iteration scheme for criticality search. This scheme is
+visually depicted as a flowchart in figure \ref{fig:flowchart}.
+At the beginning of
+each burnup step ADER builds and solves the optimization problem for all
+material clusters. Following this the determined actions for discrete type
+streams, both group-class and table-class, are applied to change material
+compositions. Following this a new Monte Carlo transport sweep is
+executed with all the same population and cycle parameters as the transport sweep
+for a burnup step. Following this transport sweep if the system
+$k_{eff}^{analog}$ is within the user set bounds, or no iterations remain,
+ the simulation proceeds to
+the calculation of the nuclear burnup solution. If the $k_{eff}^{analog}$ is
+out of bounds \textit{and} iterations remain in the criticality search, ADER
+will build and solve the optimization problem for all material clusters, again.
+Following this the actions of discrete group-class streams only, discrete
+table-class streams are only applied on the very initial iteration of the
+criticality search, are again applied to materials to change their compositions.
+On every iteration of the criticality search after the initial iteration only
+the actions of discrete group-class streams are applied to the material
+compositions. The actions of discrete table-class streams are only applied
+on the initial iteration of a criticality search. If no criticality search
+is being done, if the system neutron multiplication factor has not been
+restricted, after the Monte Carlo transport sweep following the initial
+application of both discrete group and table-class streams the simulation
+calculation proceeds on to the burnup solution. To set the maximum number
+of criticality search iterations the input below is used, the default value
+of this parameter is 5. The criticality search features of ADER
+are only activated by the \texttt{kmax} and \texttt{kmin} keywords - i.e. a 
+default value of 5 will not force a simulation through 5 criticality searches
+if no criticality search was requested.
+
+\begin{lt}
+set ader_trans_iter [value]
+\end{lt}
+
+An important consideration of the interaction of streams with multiple
+forms, \texttt{cont}, \texttt{disc}, \texttt{prop}, is that if streams of
+multiple forms are used which significantly affect system reactivity ADER's
+criticality search will only be aware of the effects due to discrete streams.
+The effects on criticality from continuous and proportional streams are not
+assessed until the burnup calculation has been completed. For
+example if ADER has 
+determined an amount of \ce{^{233}U} to inject into a material to keep it
+critical following a discrete injection of natural Li for chemistry control, and
+this uranium is from a continuous stream, the Monte Carlo transport sweep run
+before the burnup calculation will only see the negative reactivity effects
+of the discrete and instantaneous lithium injection. The positive reactivity
+effects of the uranium will be observed in the Monte Carlo transport sweep for
+the \textit{next} burnup step.
+
+\subsection{Quick Reference}\label{sec:reactivity_control_qr}
+\begin{itemize}
+\item{The maximum system $k_{eff}^{analog}$ is set by\ldots
+\begin{lt}
+kmax [value]
+\end{lt}
+    }
+\item{The minimum system $k_{eff}^{analog}$ is set by\ldots
+\begin{lt}
+kmin [value]
+\end{lt}
+    }
+\item{The system defaults for \texttt{kmin} and \texttt{kmax} are zero and 
+$\infty$ respectively. To use the system $k_{eff}^{analog}$ as a constraint
+designate one and only one material with the keyword-value pair 
+\texttt{rhow 1.0} in the material's definition and set appropriate
+\texttt{kmax} and \texttt{kmin} targets}
+\item{The maximum number of criticality search iterations is set by\ldots
+\begin{lt}
+set ader_trans_iter [value]
+\end{lt}
+    }
+\item{The criticality search feature of ADER is only aware of the reactivity
+impacts of discrete form streams, both group and table-class.}
+\item{When a criticality search is activated, the reactivity impacts \textit{of
+all streams} are assessed as part of the constraints regarding the material
+designated by the keyword-value pair \texttt{rhow 1.0}.} 
+\end{itemize}

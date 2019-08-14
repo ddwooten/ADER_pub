@@ -1,0 +1,41 @@
+Following the solution of the material optimization problem as handled by
+\texttt{ADERCorrectTransportCycle}, \texttt{BurnupCycle} will shortly call
+\texttt{BurnMaterials} which will manage the burnup solution for the current 
+step. \texttt{BurnMaterials} will then pass off ADER cluster parent materials
+to \texttt{ADERBurnMaterials} which manages the burnup solution for ADER
+clusters. Much like the composition matrices, material's which are linked
+by ADER streams must have their burnup matrices solved as a whole. The burnup
+matrix as produced by ADER is ill-behaved when solved with TTA methods. As such,
+only the CRAM solution method is used on ADER material burnup problems. The
+burnup matrix is built one column at a time with no values dropped. It is stored
+as in a dense column-major format. 
+
+\subsection{ADERBurnMaterials}
+\input{funs/ADERBurnMaterials}
+
+\subsection{ADERGetBurnMatrixSizeData}
+\input{funs/ADERGetBurnMatrixSizeData}
+
+\subsection{ADERMakeBurnMatrix}
+\input{funs/ADERMakeBurnMatrix}
+
+\subsection{ADERMapDensityVector}
+\input{funs/ADERMapDensityVector}
+
+\subsection{ADERMapDensityVectorStream}
+\input{funs/ADERMapDensityVectorStream}
+
+\subsection{ADERProcessBurnMatrixContStream}
+\input{funs/ADERProcessBurnMatrixContStream}
+
+\subsection{ADERProcessBurnMatrixFissionYield}
+\input{funs/ADERProcessBurnMatrixFissionYield}
+
+\subsection{ADERProcessBurnMatrixPropStream}
+\input{funs/ADERProcessBurnMatrixPropStream}
+
+\subsection{ADERProcessBurnMatrixTransmutationAndDecay}
+\input{funs/ADERProcessBurnMatrixTransmutationAndDecay}
+
+\subsection{ADERStoreBurnMatrixColumn}
+\input{funs/ADERStoreBurnMatrixColumn}

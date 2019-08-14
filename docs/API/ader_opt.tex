@@ -1,0 +1,282 @@
+In the third loop over materials as seen in \texttt{ADERProcessMaterialAderData}
+\texttt{ADERCreateMaterialCompMatrix} is called for each material. This function
+and its associated calls allocate the space for the material optimization matrix
+as well as setting up the associated meta-data - mostly in the form of
+\texttt{ptr}s. It should be noted that the material optimization matrix is
+incredibly sparse - more than 99\% empty space. An early, and most likely
+misguided, design decision led to this matrix being created and stored in full.
+For a single SERPENT2 material with all isotopes being tracked about 6 GB of
+space is consumed by a single matrix. It is entirely possible, albeit with a
+significant architectural overhaul, to forgo storing this matrix and rather
+generate it on the fly. This IS NOT how the composition matrix is currently
+handled. Rather this information is included as a note on why the memory
+footprint of ADER is so high and as a guidepost for future developers.\\
+Following the creation of this sparse matrix the final loop over materials in
+\texttt{ADERProcessMaterialAderData} calls \texttt{ADERFillMaterialCompMatrix}
+which will then fill in the static data for the material optimization matrix.
+With regard to many of the \texttt{ADERFill\ldots} functions which take
+a SERPENT \texttt{mat} as an input, many of these functions have restrictions
+and limitations on what kinds of \texttt{mat}s can be passed to them. Many of
+these restrictions are not enforced by code checks - rather they are elaborated
+in the comments of these functions. 
+An important note is that at various points in the code this matrix, which
+represents the linear programming problem of optimizing the material
+composition, is referred to as both the ``optimization matrix", the
+``composition matrix" and various combinations thereof, including the
+abbreviations ``opt matrix" and ``comp matrix" respectively. In this case
+``comp" should not be confused with ``cmp" the latter of which is used to
+refer to a conditions entry involving a group. \\
+Following the initial filling of the static optimization data the program
+progresses into the burnup cycles as regulated by \texttt{BurnupCycle} mentioned
+in section \ref{sec:serpent_funs}. \texttt{ADERCorrectTransportCycle} is called
+after the first transport cycle of each burnup step. This function, and
+its associated calls, will fill in the dynamic data for the material
+optimization matrices, solve these matrices, incorporate any instantaneous
+changes, and re-run the transport cycle checking to ensure the 
+neutron multiplication factor, $k_{eff}$, is in the target bounds. If
+$k_{eff}$ is, the program proceeds to building and solving the depletion
+problem. If not and iterations remain \texttt{ADERCorrectTransportCycle} runs
+through the entire process again. The key data gained from all of these steps
+just mentioned are the stream values, as determined by ADER, that will
+push the material compositions towards their optimum states.
+As a final note throughout many functions a variable by the name of \texttt{adj}
+can be seen in many places incorporated into if-statements which could
+dramatically alter program flow. As of V.1.0 the \texttt{adj} portion of the
+algorithms is unused - its value is always set to 0. This variable exists as
+part of an early development effort to create algorithmic space for an
+interaction scheme inside of the ADER routines. As no such scheme was implemented
+\texttt{adj} hangs on as a vestigial organ.
+
+\subsection{ADERAllocateClpMemory}
+\input{funs/ADERAllocateClpMemory}
+
+\subsection{ADERAverageValue}
+\input{funs/ADERAverageValue}
+
+\subsection{ADERBuildClpModel}
+\input{funs/ADERBuildClpModel}
+
+\subsection{ADERBurnMaterials}
+\input{funs/ADERBurnMaterials}
+
+\subsection{ADERClearAderXSData}
+\input{funs/ADERClearAderXSData}
+
+\subsection{ADERClearMaterialCompMatrixClusterMemPresRowBounds}
+\input{funs/ADERClearMaterialCompMatrixClusterMemPresRowBounds}
+
+\subsection{ADERClearPropStreamAmts}
+\input{funs/ADERClearPropStreamAmts}
+
+\subsection{ADERClearTargetPropStreamAmts}
+\input{funs/ADERClearTargetPropStreamAmts}
+
+\subsection{ADERCopyMaterialFlux}
+\input{funs/ADERCopyMaterialFlux}
+
+\subsection{ADERCorrectTransportCycle}
+\input{funs/ADERCorrectTransportCycle}
+
+\subsection{ADERCountStream}
+\input{funs/ADERCountStream}
+
+\subsection{ADERCountStreamIsos}
+\input{funs/ADERCountStreamIsos}
+
+\subsection{ADERCreateMaterialClusterMemCompMatrixSection}
+\input{funs/ADERCreateMaterialClusterMemCompMatrixSection}
+
+\subsection{ADERCreateMaterialCmpGroupCompMatrixSection}
+\input{funs/ADERCreateMaterialCmpGroupCompMatrixSection}
+
+\subsection{ADERCreateMaterialCompMatrix}
+\input{funs/ADERCreateMaterialCompMatrix}
+
+\subsection{ADERCreateMaterialCompMatrixCol}
+\input{funs/ADERCreateMaterialCompMatrixCol}
+
+\subsection{ADERCreateMaterialCompMatrixRow}
+\input{funs/ADERCreateMaterialCompMatrixRow}
+
+\subsection{ADERCreateMaterialEleCompMatrixSection}
+\input{funs/ADERCreateMaterialEleCompMatrixSection}
+
+\subsection{ADERCreateMaterialIsoCompMatrixSection}
+\input{funs/ADERCreateMaterialIsoCompMatrixSection}
+
+\subsection{ADERCreateMaterialOxiCompMatrixSection}
+\input{funs/ADERCreateMaterialOxiCompMatrixSection}
+
+\subsection{ADERCreateMaterialPresCompMatrixSection}
+\input{funs/ADERCreateMaterialPresCompMatrixSection}
+
+\subsection{ADERCreateMaterialRhoCompMatrixSection}
+\input{funs/ADERCreateMaterialRhoCompMatrixSection}
+
+\subsection{ADERCreateMaterialStreamCompMatrixSection}
+\input{funs/ADERCreateMaterialStreamCompMatrixSection}
+
+\subsection{ADERDeallocateTarget}
+\input{funs/ADERDeallocateTarget}
+
+\subsection{ADERFillMaterialClusterMemCompMatrixSection}
+\input{funs/ADERFillMaterialClusterMemCompMatrixSection}
+
+\subsection{ADERFillMaterialCmpGroupCompMatrixSection}
+\input{funs/ADERFillMaterialCmpGroupCompMatrixSection}
+
+\subsection{ADERFillMaterialCmpRtoCompMatrixSection}
+\input{funs/ADERFillMaterialCmpRtoCompMatrixSection}
+
+\subsection{ADERFillMaterialCmpSumCompMatrixSection}
+\input{funs/ADERFillMaterialCmpSumCompMatrixSection}
+
+\subsection{ADERFillMaterialCompMatrix}
+\input{funs/ADERFillMaterialCompMatrix}
+
+\subsection{ADERFillMaterialCompMatrixEleData}
+\input{funs/ADERFillMaterialCompMatrixEleData}
+
+\subsection{ADERFillMaterialCompMatrixIsoData}
+\input{funs/ADERFillMaterialCompMatrixIsoData}
+
+\subsection{ADERFillMaterialCompMatrixObjRow}
+\input{funs/ADERFillMaterialCompMatrixObjRow}
+
+\subsection{ADERFillMaterialEleCompMatrixSection}
+\input{funs/ADERFillMaterialEleCompMatrixSection}
+
+\subsection{ADERFillMaterialIsoCompMatrixSection}
+\input{funs/ADERFillMaterialIsoCompMatrixSection}
+
+\subsection{ADERFillMaterialObjActFeedAndRemvCompMatrixSection}
+\input{funs/ADERFillMaterialObjActFeedAndRemvCompMatrixSection}
+
+\subsection{ADERFillMaterialObjActFeedCompMatrixSection}
+\input{funs/ADERFillMaterialObjActFeedCompMatrixSection}
+
+\subsection{ADERFillMaterialObjActReacCompMatrixSection}
+\input{funs/ADERFillMaterialObjActReacCompMatrixSection}
+
+\subsection{ADERFillMaterialObjActRedoxCompMatrixSection}
+\input{funs/ADERFillMaterialObjActRedoxCompMatrixSection}
+
+\subsection{ADERFillMaterialObjActRemvCompMatrixSection}
+\input{funs/ADERFillMaterialObjActRemvCompMatrixSection}
+
+\subsection{ADERFillMaterialObjActStreamsCompMatrixSection}
+\input{funs/ADERFillMaterialObjActStreamsCompMatrixSection}
+
+\subsection{ADERFillMaterialObjActTransfersCompMatrixSection}
+\input{funs/ADERFillMaterialObjActTransfersCompMatrixSection}
+
+\subsection{ADERFillMaterialObjGrpCompMatrixSection}
+\input{funs/ADERFillMaterialObjGrpCompMatrixSection}
+
+\subsection{ADERFillMaterialObjStreamCompMatrixSection}
+\input{funs/ADERFillMaterialObjStreamCompMatrixSection}
+
+\subsection{ADERFillMaterialOxiCompMatrixSection}
+\input{funs/ADERFillMaterialOxiCompMatrixSection}
+
+\subsection{ADERFillMaterialPresCompMatrixSection}
+\input{funs/ADERFillMaterialPresCompMatrixSection}
+
+\subsection{ADERFillMaterialPresMolsCompMatrixSection}
+\input{funs/ADERFillMaterialPresMolsCompMatrixSection}
+
+\subsection{ADERFillMaterialStreamCompMatrixSection}
+\input{funs/ADERFillMaterialStreamCompMatrixSection}
+
+\subsection{ADERGetEigenBias}
+\input{funs/ADERGetEigenBias}
+
+\subsection{ADERGetIsoBurnMatrixIndex}
+\input{funs/ADERGetIsoBurnMatrixIndex}
+
+\subsection{ADERGetLeakageCorrectionFactor}
+\input{funs/ADERGetLeakageCorrectionFactor}
+
+\subsection{ADERGetMatEleIsoFrac}
+\input{funs/ADERGetMatEleIsoFrac}
+
+\subsection{ADERGetMaterialCompMatrixElement}
+\input{funs/ADERGetMaterialCompMatrixElement}
+
+\subsection{ADERGetMaterialRemovalAmounts}
+\input{funs/ADERGetMaterialRemovalAmounts}
+
+\subsection{ADERGetMaterialShadowStreamIsoFracs}
+\input{funs/ADERGetMaterialShadowStreamIsoFracs}
+
+\subsection{ADERGetMaterialStreamUnFixedEleIsoFracs}
+\input{funs/ADERGetMaterialStreamUnFixedEleIsoFracs}
+
+\subsection{ADERGetStreamRemovalAmounts}
+\input{funs/ADERGetStreamRemovalAmounts}
+
+\subsection{ADERGetTransportInformation}
+\input{funs/ADERGetTransportInformation}
+
+\subsection{ADERMoveBosEosPs1Values}
+\input{funs/ADERMoveBosEosPs1Values}
+
+\subsection{ADERMoveCrossSection}
+\input{funs/ADERMoveCrossSection}
+
+\subsection{ADERNormalizeCrossSection}
+\input{funs/ADERNormalizeCrossSection}
+
+\subsection{ADEROperateMaterial}
+\input{funs/ADEROperateMaterial}
+
+\subsection{ADEROperateMaterialCompMatrix}
+\input{funs/ADEROperateMaterialCompMatrix}
+
+\subsection{ADERParseClpSolution}
+\input{funs/ADERParseClpSolution}
+
+\subsection{ADERParseStreamClpSolution}
+\input{funs/ADERParseStreamClpSolution}
+
+\subsection{ADERProcessMaterialDiscStreamEffects}
+\input{funs/ADERProcessMaterialDiscStreamEffects}
+
+\subsection{ADERProcessMaterialShadowStreamEleAndIsoFracs}
+\input{funs/ADERProcessMaterialShadowStreamEleAndIsoFracs}
+
+\subsection{ADERScoreCrossSection}
+\input{funs/ADERScoreCrossSection}
+
+\subsection{ADERSetMaterialCompMatrixClusterMemColBounds}
+\input{funs/ADERSetMaterialCompMatrixClusterMemColBounds}
+
+\subsection{ADERSetMaterialCompMatrixClusterMemPresRowBounds}
+\input{funs/ADERSetMaterialCompMatrixClusterMemPresRowBounds}
+
+\subsection{ADERSetMaterialCompMatrixClusterMemRemovalTableRowBounds}
+\input{funs/ADERSetMaterialCompMatrixClusterMemRemovalTableRowBounds}
+
+\subsection{ADERSetMaterialCompMatrixClusterMemRhoRowEntries}
+\input{funs/ADERSetMaterialCompMatrixClusterMemRhoRowEntries}
+
+\subsection{ADERSetMaterialCompMatrixClusterMemRowBounds}
+\input{funs/ADERSetMaterialCompMatrixClusterMemRowBounds}
+
+\subsection{ADERSetMaterialCompMatrixColBounds}
+\input{funs/ADERSetMaterialCompMatrixColBounds}
+
+\subsection{ADERSetMaterialCompMatrixElement}
+\input{funs/ADERSetMaterialCompMatrixElement}
+
+\subsection{ADERSetMaterialCompMatrixRowBounds}
+\input{funs/ADERSetMaterialCompMatrixRowBounds}
+
+\subsection{ADERSetShadowStreamRemovalAmount}
+\input{funs/ADERSetShadowStreamRemovalAmount}
+
+\subsection{ADERSolveClpModel}
+\input{funs/ADERSolveClpModel}
+
+\subsection{ADERUpdateMaterialDiscStreamEffects}
+\input{funs/ADERUpdateMaterialDiscStreamEffects}

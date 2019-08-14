@@ -1,0 +1,24 @@
+\textbf{Info}: This function replicates, through itself and its child-functions,
+the functionality of \texttt{MakeBurnMatrix} with the addition of functionality
+as needed by ADER. The burnup matrix is stored in a dense column-major format. 
+Cross sections are pulled from \texttt{rea} structures which are attached to 
+\texttt{nuc}s. As such, the sequence of functions \texttt{CalculateTransmuXS}
+\texttt{StoreTransmuXS} must be called for each cluster member such that the
+cross sections for that cluster member are used when filing in the burnup matrix
+data as the two mentioned functions move the XS information from the material
+\texttt{dep} structures to the \texttt{rea} structures.
+
+\noindent \textbf{Inputs}:
+\begin{itemize}
+\item{struct ccsMatrix burn\_matrix}
+\item{double* col\_vector}
+\item{long mat}
+\item{long num\_ents}
+\item{long num\_rows}
+\item{long step}
+\item{long step\_type}
+\item{double t1}
+\item{double t2}
+\end{itemize}
+
+\noindent \textbf{Returns}: void

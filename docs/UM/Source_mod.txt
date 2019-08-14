@@ -1,0 +1,2185 @@
+BurnMatCompositions: Ln 60 - 62
+{
+	  /* ADER MOD BEGIN */
+
+      if (((!((long)RDB[mat + MATERIAL_OPTIONS] & OPT_BURN_MAT)) ||
+	  ((long)RDB[mat + MATERIAL_DIV_PTR_PARENT] > VALID_PTR)) &&
+	  ((long)RDB[mat + MATERIAL_ADER_DATA] < VALID_PTR))
+	{
+
+      /* ADER MOD END */
+}
+
+BurnMaterials: Ln 185 - 214
+{
+	  /* ADER MOD BEGIN */
+      /* All that was changed, other than the ader directives to redirect ader*/
+      /* material to ader functions, was spacing and indentation because      */
+
+#ifdef OPEN_MP
+#pragma omp parallel private (mat)
+#endif
+      {
+
+    	  /* Loop over materials */
+
+    	  mat = (long)RDB[DATA_PTR_M0];
+
+    	  while (mat > VALID_PTR)
+    	  {
+
+        	  /* Check burn flag and test parallel id's */
+
+        	  if ((long)RDB[mat + MATERIAL_OPTIONS] & OPT_BURN_MAT)
+        	  {
+
+            	  if (MyParallelMat(mat, YES) == YES)
+            	  {
+
+                	  if((long)RDB[mat + MATERIAL_ADER_DATA] > VALID_PTR)
+                	  {
+
+                    	  if((long)RDB[(long)RDB[mat + MATERIAL_ADER_DATA] + ADER_MAT_CLUSTER_PARENT_PTR] == mat)
+                    	  {
+
+                    		    if(!(((long)RDB[DATA_BURN_STEP_PC] == PREDICTOR_STEP) &&
+                    		         ((long)RDB[DATA_BURN_STEP] != 0)))
+                    		    {
+
+                            	      ADERBurnMaterials(1, mat, mode, nss, step, type);
+
+#ifdef ADER_INT_TEST
+#ifdef OPEN_MP
+
+				fprintf(outp, "ADER Thread %d reporting in!\n", OMP_THREAD_NUM);
+
+#endif
+#endif
+
+                    		    }
+
+        					  /* Print */
+
+        					  PrintProgress(mat, 2);
+
+                    	  }
+
+                	  }
+                	  else
+                	  {
+
+                    	  /* Burn */
+
+                    	  BurnMaterialsCI(mat, step, nss, type, mode);
+
+                    	  /* Print */
+
+                    	  PrintProgress(mat, 2);
+
+                	  }
+
+            	  }
+
+        	  }
+
+        	  /* Next material */
+
+        	  mat = NextItem(mat);
+
+    	  }
+
+      }
+
+	  /* ADER MOD END */
+}
+
+BurnMaterials: Ln 258 - 304
+{
+  /* ADER MOD BEGIN */
+  /* All that was changed, other than the ader directives to redirect ader*/
+  /* material to ader functions, was spacing and indentation because      */
+
+#ifdef OPEN_MP
+#pragma omp parallel private (mat)
+#endif
+   {
+
+	  /* Loop over materials */
+
+	  mat = (long)RDB[DATA_PTR_M0];
+
+	  while (mat > VALID_PTR)
+	  {
+
+		  /* Check burn flag and inflow, and test parallel id's */
+		  /* NOTE: No inflo in conventional burnup calculation. */
+
+		  if (((long)RDB[mat + MATERIAL_OPTIONS] & OPT_BURN_MAT) &&
+		  ((long)RDB[mat + MATERIAL_PTR_INFLOW] < VALID_PTR))
+		  {
+
+			  if (MyParallelMat(mat, YES) == YES)
+			  {
+				  /* Check flow index and burn */
+
+				  if((long)RDB[mat + MATERIAL_ADER_DATA] > VALID_PTR)
+				  {
+
+					  if((long)RDB[(long)RDB[mat + MATERIAL_ADER_DATA] + ADER_MAT_CLUSTER_PARENT_PTR] == mat)
+					  {
+
+                  	      ADERBurnMaterials(0, mat, mode, nss, step, type);
+
+    					  /* Print */
+
+    					  PrintProgress(mat, 2);
+
+					  }
+					  else
+					  {
+
+						  mat = NextItem(mat);
+
+						  continue;
+
+					  }
+
+				  }
+				  else if ((long)RDB[mat + MATERIAL_FLOW_IDX] == 0)
+				  {
+
+					  /* Not involved in continuous reprocessing */
+
+					  BurnMaterials0(mat, step, nss, type, mode);
+
+					  /* Print */
+
+					  PrintProgress(mat, 2);
+
+				  }
+				  else if ((long)RDB[mat + MATERIAL_FLOW_IDX] == 1)
+				  {
+
+					  /* First material in chain */
+
+					  BurnMaterialsMSR(mat, step, nss, type, mode);
+
+					  /* Print */
+
+					  PrintProgress(mat, 2);
+
+				  }
+
+			  }
+
+		  }
+
+		  /* Next material */
+
+		  mat = NextItem(mat);
+
+	  }
+
+   }
+
+   /* ADER MOD END */
+}
+
+BurnMaterials: Ln 373
+{
+      /* ADER MOD BEGIN */
+
+      StoreTransmuXS(mat, step, type, id, 0);
+
+      /* ADER MOD END */
+}
+
+BurnMaterials: Ln 624
+{
+      /* ADER MOD BEGIN */
+
+      StoreTransmuXS(mat, step, type, id, 0);
+
+      /* ADER MOD END */
+}
+
+BurnMaterials: Ln 930
+{
+      /* ADER MOD BEGIN */
+
+      StoreTransmuXS(mat, step, type, id, 0);
+
+      /* ADER MOD END */
+}
+
+BurnupCycle: Ln 197
+{
+            		      /* ADER MOD BEGIN */
+            		      if(((long)RDB[(long)RDB[DATA_PTR_ADER] + ADER_CONDITIONS_PTR] > VALID_PTR ||
+            		         (long)RDB[(long)RDB[DATA_PTR_ADER] + ADER_STREAMS_PTR] > VALID_PTR) &&
+            		         ((long)RDB[DATA_BURN_STEP_PC] == PREDICTOR_STEP) &&
+            				 (step != (long)RDB[dep + DEP_HIS_N_STEPS]))
+            		      {
+
+            		          /* This function here will call the appropriate functions to*/
+            		          /* get the energy averaged cross sections so the ader calc  */
+            		          /* can take place. Following this, if there are are discreet*/
+            		          /* streams, it will loop through this process until the     */
+            		          /* convergence criteria have been met                       */
+
+            		          ADERCorrectTransportCycle(dep, step);
+
+            		      }
+            		      /* ADER MOD END */
+}
+
+CalculateTransmuXS: Ln 329-332
+{
+      /* ADER MOD BEGIN */
+
+      ADERScoreCrossSection(1, E, id, mat, nuc, rea, sum);
+
+      if(flx > 0.0)
+      {
+
+          sum = sum/flx;
+
+      }
+      else if (sum > 0.0)
+      {
+
+          Die(FUNCTION_NAME, "Error in sums");
+
+      }
+
+      /* ADER MOD END */
+}
+
+CalculateTransmuXS: Ln 563-566
+{
+      /* ADER MOD BEGIN */
+
+      ADERScoreCrossSection(1, E, id, mat, nuc, rea, sum);
+
+      if(flx > 0.0)
+      {
+
+          sum = sum/flx;
+
+      }
+      else if (sum > 0.0)
+      {
+
+          Die(FUNCTION_NAME, "Error in sums");
+
+      }
+
+      /* ADER MOD END */
+}
+
+CalculateTransmuXS: Ln 783
+{
+  /* ADER MOD BEGIN */
+
+  ADERNormalizeCrossSection(flx, mat);
+
+  /* ADER MOD END */
+}
+
+ClearPrivateData: Ln 25
+{
+  /* ADER MOD BEGIN */
+
+  /* The ADERClearAderXSData function is called here to match the behavior of */
+  /* CalculateTransmuXS                                                       */
+
+  ADERClearAderXSData();
+
+  /* ADER MOD END */
+}
+
+header.h: Ln 26
+{
+/* ADER MOD BEGIN */
+
+#include <Clp_C_Interface.h>
+
+/* ADER MOD END */
+}
+
+header.h: Ln 1290
+{
+/* ADER MOD BEGIN */
+
+void ADERAddClusterMember(long, char*, double);
+
+double **ADERAllocateClpMemory(long);
+
+double ADERAverageValue(double, double, double, double, double, long);
+
+long ADERBuildClpModel(long, double*, double*, double*, double*, double*,
+		               double*, double*, double* );
+
+void ADERBurnMaterials(long, long, long, long, long, long);
+
+void ADERCheckMaterialClusterIsotopes(long);
+
+void ADERCheckMaterialRemovalTables(long, long);
+
+void ADERClearAderXSData();
+
+void ADERClearMaterialCompMatrixClusterMemPresRowBounds(long, long);
+
+void ADERCompareMaterialRemovalTables(long, long, long);
+
+void ADERCopyMaterialFlux(double, double, double, long);
+
+void ADERCorrectTransportCycle();
+
+long ADERCountStream(long, long, long);
+
+long ADERCountStreamIsos(long, long);
+
+void ADERCreateAderCndEntry(char*, long, char**, char*, long, char*);
+
+void ADERCreateAderControlEntry(char*, long, char**, char*, long, char*);
+
+void ADERCreateAderGroupEntry(char*, long, char**, char*, long, char*);
+
+void ADERCreateAderOxidationEntry(char*, long, char**, char*, long, char*);
+
+void ADERCreateAderRemovalEntry(char*, long, char**, char*, long, char*);
+
+void ADERCreateAderStreamEntry(char*, long, char**, char*, long);
+
+void ADERCreateMaterialClusterMemCompMatrixSection(long, long);
+
+void ADERCreateMaterialCmpGroupCompMatrixSection(long, long);
+
+void ADERCreateMaterialCompMatrix(long);
+
+long ADERCreateMaterialCompMatrixCol(long, double, double);
+
+long ADERCreateMaterialCompMatrixRow(long, double, double);
+
+void ADERCreateMaterialEleCompMatrixSection(long, long);
+
+void ADERCreateMaterialIsoCompMatrixSection(long, long);
+
+void ADERCreateMaterialOxiCompMatrixSection(long, long);
+
+void ADERCreateMaterialPresCompMatrixSection(long, long);
+
+void ADERCreateMaterialRhoCompMatrixSection(long, long);
+
+void ADERCreateMaterialStreamCompMatrixSection(long, long);
+
+void ADERDeallocateTarget(double**, long);
+
+void ADERFillMaterialClusterMemCompMatrixSection(long, long);
+
+void ADERFillMaterialCmpGroupCompMatrixSection(long, long, long);
+
+void ADERFillMaterialCmpRtoCompMatrixSection(long, long, long, long);
+
+void ADERFillMaterialCmpSumCompMatrixSection(long, long, long);
+
+void ADERFillMaterialCompMatrix(long);
+
+void ADERFillMaterialCompMatrixEleData(long, long, long, long, double, long, long);
+
+void ADERFillMaterialCompMatrixIsoData(long, long, long, long, double, long, long);
+
+void ADERFillMaterialCompMatrixObjRow(long);
+
+void ADERFillMaterialEleCompMatrixSection(long, long);
+
+void ADERFillMaterialIsoCompMatrixSection(long, long);
+
+void ADERFillMaterialObjActFeedAndRemvCompMatrixSection(long);
+
+void ADERFillMaterialObjActFeedCompMatrixSection(long);
+
+void ADERFillMaterialObjActReacCompMatrixSection(long);
+
+void ADERFillMaterialObjActRedoxCompMatrixSection(long);
+
+void ADERFillMaterialObjActRemvCompMatrixSection(long);
+
+void ADERFillMaterialObjActStreamsCompMatrixSection(long);
+
+void ADERFillMaterialObjActTransfersCompMatrixSection(long);
+
+void ADERFillMaterialObjGrpCompMatrixSection(char*, long);
+
+void ADERFillMaterialObjStreamCompMatrixSection(char*, long);
+
+void ADERFillMaterialOxiCompMatrixSection(long, long);
+
+void ADERFillMaterialPresCompMatrixSection(long, long, long);
+
+void ADERFillMaterialPresMolsCompMatrixSection(long, long, long);
+
+void ADERFillMaterialStreamCompMatrixSection(long, long, long);
+
+long ADERFindShadowStream(long, long);
+
+void ADERFindShadowStreamSumStreams(long, long, long);
+
+double** ADERGetBurnMatrixSizeData(long);
+
+double ADERGetBurnMatrixValue(long, struct ccsMatrix*, long);
+
+double ADERGetEigenBias(long, long, double, double);
+
+long ADERGetIsoBurnMatrixIndex(char*, long, long);
+
+void ADERGetLeakageCorrectionFactor(long, long, long);
+
+void ADERGetMatEleIsoFrac(long);
+
+double ADERGetMaterialCompMatrixElement(long, long, long);
+
+void ADERGetMaterialShadowStreamIsoFracs(long);
+
+void ADERGetMaterialStreamUnFixedEleIsoFracs(long, long, long);
+
+void ADERGetMaterialRemovalAmounts(long, long, double, double);
+
+void ADERGetStreamRemovalAmounts(long, long, long, double, double);
+
+double ADERGetStreamTargetRemovalAmount(long, long, long);
+
+double ADERGetTargetRemovalAmount(long, long, long);
+
+void ADERGetTransportInformation(long, long, long);
+
+void ADERLinkMaterialGroupIsotopes(long, long);
+
+void ADERLinkMaterialIsotopeIndices(long);
+
+void ADERLinkMaterialStreamIsotopes(long, long);
+
+void ADERMakeBurnMatrix(struct ccsMatrix*, double*,long, long, long, long,
+		                long, double, double);
+
+void ADERMapDensityVector(double*, double*, long, long, long, long, double);
+
+void ADERMapDensityVectorStream(double*, long, long, long, double);
+
+void ADERMatchMaterialClusterIsotopes(long);
+
+void ADERMergeClusters(long, long);
+
+void ADERMoveBosEosPs1Values(long, long, long, long, long, long, long, long);
+
+void ADERMoveCrossSection(long, long, long);
+
+void ADERNormalizeCrossSection(double, long);
+
+void ADEROperateMaterial(long, long, long, long, long, double, double);
+
+void ADEROperateMaterialCompMatrix(long, long, long, long);
+
+void ADEROutputBurnMatrixAsCsv(struct ccsMatrix*, long, long, long, long);
+
+void ADEROutputMaterialCompMatrixAsCsv(long, long);
+
+void ADEROutputMaterialCompMatrixData();
+
+long ADEROutputMaterialCompMatrixStreamData(long, long, long, FILE*, long, long,
+		                                    long);
+
+void ADERParseClpSolution(long, long, long, long, double*);
+
+void ADERParseStreamClpSolution(long, long, double*);
+
+void ADERPrintCrossSections(long, long, long, long, double, double);
+
+void ADERPrintFinalStepCrossSections(long, long, long, double, double);
+
+void ADERPrintIndentedOutput(FILE*, char*, long, long);
+
+void ADERPrintListsHierarchy();
+
+void ADERPrintMaterialStreamIsotopes(long, FILE*, long);
+
+void ADERPrintOutput(long, FILE*, char*);
+
+void ADERPrintOutputStreamData(long, FILE*, char*);
+
+void ADERPrintSumStreams(long, FILE*, int);
+
+void ADERProcessAderClusterMems(long, long, char*, long, char*);
+
+void ADERProcessAderClusters();
+
+void ADERProcessAderGroupFractions(long);
+
+void ADERProcessAderGroups();
+
+void ADERProcessAderMainData();
+
+void ADERProcessAderStreams();
+
+void ADERProcessAderStreamSourcesAndDests(long);
+
+void ADERProcessAderSumGroup(long);
+
+long ADERProcessBurnMatrixContStream(struct ccsMatrix*, long, double*,
+		                             long, long, long, long*);
+
+void ADERProcessBurnMatrixFissionYield(long, double*, long, long, double, long,
+		                               long, long, long);
+
+void ADERProcessBurnMatrixPropStream(long, long, double*, long);
+
+void ADERProcessBurnMatrixTransmutationAndDecay(long, double*, long, double,
+		                                        long, long, long, long, long);
+
+void ADERProcessMaterialAderClusterMems(long, long);
+
+void ADERProcessMaterialAderClusterParent(long, long);
+
+void ADERProcessMaterialAderClusters(long);
+
+void ADERProcessMaterialAderCndCntData(long, long);
+
+void ADERProcessMaterialAderCndData(long, char*, long);
+
+void ADERProcessMaterialAderCndOptData(long, long);
+
+void ADERProcessMaterialAderCndOxiData(long, long);
+
+void ADERProcessMaterialAderCndPresData(long, long);
+
+void ADERProcessMaterialAderData();
+
+void ADERProcessMaterialAderIsosData(long);
+
+void ADERProcessMaterialClusterOptEntry(long);
+
+long ADERProcessMaterialCndGroupData(char*, long);
+
+void ADERProcessMaterialCndRngData(long, long, long);
+
+void ADERProcessMaterialCndRtoData(long, long, long);
+
+void ADERProcessMaterialConditions(long);
+
+void ADERProcessMaterialDiscStreamEffects(long, long, long, long);
+
+void ADERProcessMaterialGroupComposition(long, long, long, long, long, long);
+
+void ADERProcessMaterialRemovalData(long, long, long);
+
+void ADERProcessMaterialRemovalEle(long, long);
+
+void ADERProcessMaterialRemovalEntryData(long, long, long, long);
+
+void ADERProcessMaterialRemovalIsos(long, long);
+
+void ADERProcessMaterialShadowStreamCompMatrixSection(long);
+
+void ADERProcessMaterialShadowStreams(long);
+
+void ADERProcessMaterialShadowStreamEleAndIsoFracs(long);
+
+void ADERProcessMaterialStreamData(long, long, long);
+
+void ADERProcessMaterialStreamGroupData(long, long, long, long);
+
+void ADERProcessMaterialStreams(long);
+
+void ADERProcessMaterialStreamUnFixedEle(long, long, long);
+
+void ADERProcessMaterialStreamUnFixedEleIsoFracs(long);
+
+long ADERReadAderCndCntData(char*, long, long, long, char**, char*);
+
+void ADERReadAderCndData(char*, long, long, long, char**, char*, long);
+
+long ADERReadAderCndOptData(char*, long, long, long, char**, char*);
+
+long ADERReadAderCndOxiData(char*, long, long, long, char**, char*);
+
+long ADERReadAderCndPresData(char*, long, long, long, char**, char*);
+
+long ADERReadAderCndRngData(char*, long, long, long, char**, char*);
+
+long ADERReadAderCndRtoData(char*, long, long, long, char**, char*);
+
+void ADERReadAderControlData(char*, long, long, long, char**, char*, long);
+
+void ADERReadAderDensCorr(char*, long, char**, char*, long);
+
+void ADERReadAderGroupData(char*, long, long, long, char**, char*, long);
+
+long ADERReadAderGroupIsosData(long, char*, long, long, long, char**, char*,
+                               int);
+
+long ADERReadAderGroupItemData(char*, long, long, long, char**, char*, long);
+
+long ADERReadAderGroupSumData(char*, long, long, long, char**, char*, long);
+
+void ADERReadAderKConData(char*, long, char**, char*, long);
+
+void ADERReadAderKMaxData(char*, long, char**, char*, long);
+
+void ADERReadAderKMinData(char*, long, char**, char*, long);
+
+void ADERReadAderKTarData(char*, long, char**, char*, long);
+
+void ADERReadAderNegAdens(char*, long, char**, char*, long);
+
+void ADERReadAderOxidationData(char*, long, long, long, char**, char*, long);
+
+void ADERReadAderRemovalData(char*, long, long, long, char**, char*, long);
+
+void ADERReadAderStreamData(char*, long, long, long, char**, char*, long);
+
+long ADERReadAderTransIterData(char*, long, char**, char*, long, long);
+
+void ADERScoreCrossSection(long, double, long, long, long, long, double);
+
+void ADERSetMatAderMem(long, char**, long, char*, char*, long);
+
+void ADERSetMaterialCompMatrixElement(long, long, long, double);
+
+void ADERSetMaterialCompMatrixClusterMemPresRowBounds(long, long, double);
+
+void ADERSetMaterialCompMatrixClusterMemRemovalTableRowBounds(long, long, long,
+		                                                      long, double,
+															  double);
+
+void ADERSetMaterialCompMatrixClusterMemRhoRowEntries(long, long, double, double);
+
+void ADERSetMaterialCompMatrixClusterMemRowBounds(long, long, long, double, double);
+
+void ADERSetMaterialCompMatrixColBounds(long, long, long, long, double);
+
+void ADERSetMaterialCompMatrixRowBounds(long, long, long, long, double);
+
+void ADERSetShadowStreamRemovalAmount(long, long, long, double);
+
+void ADERSolveClpModel(double*, double*, double*, long, long, long, double*,
+					   long, double*, double*, double*, double*, double*, long);
+
+long ADERStoreBurnMatrixColumn(struct ccsMatrix*, long, double*, long, long);
+
+void ADERUpdateMaterialDiscStreamEffects(long, long, long);
+
+/* ADER MOD END */
+}
+
+header.h: Ln 1706
+{
+/* ADER MOD BEGIN */
+
+void FinalTestReport(long, long, long);
+
+/* ADER MOD END */
+}
+
+header.h: Ln 2239
+{
+/* ADER MOD BEGIN */
+
+void PrintTest(char *, char *, char *, int);
+
+/* ADER MOD END */
+}
+
+header.h: Ln 2587
+{
+/* ADER MOD BEGIN */
+
+void RunTests();
+
+/* ADER MOD END */
+}
+
+header.h: Ln 2852
+{
+/* ADER MOD BEGIN */
+
+void StoreTransmuXS(long, long, long, long, long);
+
+/* ADER MOD END */
+}
+
+header.h Ln 2892
+{
+/* ADER MOD BEGIN */
+
+void TESTADERAllocateClpMemory(long);
+
+void TESTADERAverageValue(long, long);
+
+void TESTADERBuildClpModel(long);
+
+void TESTADERClpModel(Clp_Simplex*, long);
+
+void TESTADERCompareBurnMatrices(struct ccsMatrix*, long, long, long);
+
+void TESTADERCopyMaterialFlux(long);
+
+void TESTADERCountStream(long);
+
+void TESTADERFillMatCompMatrixPresMolsRow(long);
+
+void TESTADERFixComposition();
+
+void TESTADERGetBurnMatrixSizeData(long);
+
+void TESTADERGetBurnMatrixValue();
+
+void TESTADERGetEigenBias(long, long, double, double);
+
+void TESTADERGetIsoBurnMatrixIndex(long);
+
+void TESTADERGetTargetRemovalAmount();
+
+void TESTADERMakeBurnMatrix();
+
+void TESTADERMapDensityVector();
+
+void TESTADERMatEleBalBounds(long);
+
+void TESTADERMatEleFutBounds(long);
+
+void TESTADERMatEleIsoBounds();
+
+void TESTADERMatIsoAbsMicXsBos(long);
+
+void TESTADERMatIsoAbsMicXsEosInit(long);
+
+void TESTADERMatIsoAbsMicXsPs1Init(long);
+
+void TESTADERMatIsoBalBounds(long);
+
+void TESTADERMatIsoFutBounds(long);
+
+void TESTADERMatIsoNuBarFisMicXsBos(long);
+
+void TESTADERMatIsoNuBarFisMicXsEosInit(long);
+
+void TESTADERMatIsoNuBarFisMicXsPs1Init(long);
+
+void TESTADERMatIsoRhoRowEntry(long, long);
+
+void TESTADERMatMaxRhoMinRowBound();
+
+void TESTADERMatMinRhoMaxRowBound();
+
+void TESTADERMatPresBounds(long);
+
+void TESTADERMatRemvEleAmount(long);
+
+void TESTADERMatRemvIsoAmount(long);
+
+void TESTADERMatSysLeakageBos(long);
+
+void TESTADERMatSysLeakageEos(long);
+
+void TESTADERMatSysLeakagePs1Init(long);
+
+void TESTAderModifyClpSolution(double*, long);
+
+void TESTADERNormalizeMaterialStreamDensity(long);
+
+void TESTADERParseClpSolution(double*, long);
+
+void TESTADERProcessMatStreamEleUnFixedIsoEleFrac(long);
+
+void TESTADERProcessMatStreamEleUnFixedIsoFrac(long);
+
+void TESTADERProcessMatSumStreamEleUnFixedIsoFrac(long);
+
+void TESTADERSolveClpModel(long);
+
+void TESTADERTransmuXS(long);
+
+void TESTADERUpdateMaterialCompMatrixStreamIsoFracs(long);
+
+void TESTADERUpdateMaterialCompMatrixSumStreamIsoFracs(long);
+
+void TESTADERUpdateMaterialDiscStreamEffects(long);
+
+void TESTADERUpdateMaterialDiscSumStreamEffects(long);
+
+/* ADER MOD END */
+}
+
+InitData: Ln 428
+{
+  /* ADER MOD BEGIN */
+   
+  WDB[DATA_BURN_CALC_NSF] = (double)YES;
+
+  /* ADER MOD END */
+}
+
+InitData: Ln 711
+{
+  /* ADER MOD BEGIN */
+
+  WDB[DATA_PTR_ADER] = NewItem(DATA_PTR_ADER, ADER_BLOCK_SIZE);
+  WDB[(long)RDB[DATA_PTR_ADER] + ADER_K_MAX] = 1.0E+18;
+  WDB[(long)RDB[DATA_PTR_ADER] + ADER_K_MIN] = 0.0;
+
+  /* ADER MOD END */
+}
+
+input_params.h: Insert after line 60 ( contents '    "sample",')
+{
+	/* ADER MOD BEGIN */
+    "grp",
+    "conditions",
+    "stream",
+    "oxidation",
+    "control",
+    "removal",
+    "kmin",
+    "kmax",
+	/* ADER MOD END */
+}
+
+locations.h: Ln 1214
+{
+  /* ADER MOD BEGIN */
+
+  /* Positions for ADER data */
+
+   DATA_TEST_MODE,
+   DATA_PTR_ADER,
+
+  /* ADER MOD END */
+}
+
+locations.h: Insert after line 1672 (contents '  MATERIAL_DD_Z0,')
+{
+/* ADER MOD BEGIN */
+  MATERIAL_ADER_DATA,
+/* ADER MOD END */
+}
+
+locations.h: Ln 1858
+{
+/* ADER MOD BEGIN */
+
+/***** ADER Material Data ****************************************************/
+
+enum block_ADER_MAT {
+  ADER_MAT_CLUSTER_MEMS_PTR = LIST_DATA_SIZE,    
+  ADER_MAT_CLUSTER_PARENT_PTR, 
+  ADER_MAT_CMPS_PTR,            
+  ADER_MAT_CNDS_PTR,            
+  ADER_MAT_CNT_TBLS_PTR,        
+  ADER_MAT_ELES_PTR,           
+  ADER_MAT_FAKE_ISO_BURN_INDEX, 
+  ADER_MAT_FEED_STREAMS_PTR,    
+  ADER_MAT_FLUX,                
+  ADER_MAT_FLUX_OLD_AVG,        
+  ADER_MAT_FLUX_NEW_AVG,        
+  ADER_MAT_ISOS_PTR,            
+  ADER_MAT_SYS_LEAKAGE_AVG,      
+  ADER_MAT_SYS_LEAKAGE_BOS,     
+  ADER_MAT_SYS_LEAKAGE_CUR,     
+  ADER_MAT_SYS_LEAKAGE_EOS,     
+  ADER_MAT_SYS_LEAKAGE_PS1,     
+  ADER_MAT_MATRIX_PTR,          
+  ADER_MAT_OPT_PTR,             
+  ADER_MAT_OXI_PTR,             
+  ADER_MAT_PRESERVES_PTR,      
+  ADER_MAT_PRE_STEP_ADENS,   
+  ADER_MAT_PRINTED_FLAG,        
+  ADER_MAT_RATE_SEARCH_PTR,     
+  ADER_MAT_REAC_STREAMS_PTR,   
+  ADER_MAT_REDOX_STREAMS_PTR,   
+  ADER_MAT_REMV_STREAMS_PTR,    
+  ADER_MAT_RHO_WEIGHT,          
+  ADER_MAT_RHO_MAX_ROW_ID,      
+  ADER_MAT_RHO_MIN_ROW_ID,      
+  ADER_MAT_BLOCK_SIZE          
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Cluster Members **************************************/
+
+enum block_ADER_MAT_CLUSTER_MEM {
+  ADER_MAT_CLUSTER_MEM_PTR = LIST_DATA_SIZE, 
+  ADER_MAT_CLUSTER_MEM_BLOCK_SIZE 
+};       
+
+/*****************************************************************************/
+
+/***** ADER Material Composition Group Data **********************************/
+
+enum block_ADER_MAT_CMP {
+  ADER_MAT_CMP_ADJ_AMT = LIST_DATA_SIZE,         
+  ADER_MAT_CMP_BURN_STEPS_PTR,  
+  ADER_MAT_CMP_COL_ID,          
+  ADER_MAT_CMP_CUR_AMT,         
+  ADER_MAT_CMP_ELES_PTR,        
+  ADER_MAT_CMP_GRP_PTR,         
+  ADER_MAT_CMP_ID,              
+  ADER_MAT_CMP_ISOS_PTR,        
+  ADER_MAT_CMP_RNG_PTR,         
+  ADER_MAT_CMP_RTOS_PTR,        
+  ADER_MAT_CMP_SUM_GRPS_PTR,    
+  ADER_MAT_CMP_SUM_GRPS_ROW_ID, 
+  ADER_MAT_CMP_BLOCK_SIZE     
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Group Ratio Data ****************************************/
+
+enum block_ADER_MAT_CMP_RNG {
+  ADER_MAT_CMP_RNG_MAX = LIST_DATA_SIZE,         
+  ADER_MAT_CMP_RNG_MIN,         
+  ADER_MAT_CMP_RNG_BLOCK_SIZE  
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Group Ratio Data ****************************************/
+
+enum block_ADER_MAT_CMP_RTO {
+  ADER_MAT_CMP_RTO_2ND_GRP_PTR = LIST_DATA_SIZE, 
+  ADER_MAT_CMP_RTO_MAX,         
+  ADER_MAT_CMP_RTO_MIN,         
+  ADER_MAT_CMP_RTO_MAX_ROW_ID,  
+  ADER_MAT_CMP_RTO_MIN_ROW_ID,  
+  ADER_MAT_CMP_RTO_BLOCK_SIZE  
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Controlled Elements and Isotopes Data *******************/
+
+enum block_ADER_MAT_CND {
+  ADER_MAT_CND_ID = LIST_DATA_SIZE,              
+  ADER_MAT_CND_PTR,             
+  ADER_MAT_CND_ENT_BLOCK_SIZE  
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Controlled Elements and Isotopes Data *******************/
+
+enum block_ADER_MAT_CNT_ENT {
+  ADER_MAT_CNT_TBL_PTR = LIST_DATA_SIZE,         
+  ADER_MAT_CNT_ENT_BLOCK_SIZE  
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Element Entry Data **************************************/
+
+enum block_ADER_MAT_ELE {
+  ADER_MAT_ELE_BAL_ROW_ID = LIST_DATA_SIZE,       
+  ADER_MAT_ELE_CONTROL_FLAG,     
+  ADER_MAT_ELE_DEL_COL_ID,       
+  ADER_MAT_ELE_DEL_ROW_ID,       
+  ADER_MAT_ELE_FUT_COL_ID,      
+  ADER_MAT_ELE_FUT_ROW_ID,       
+  ADER_MAT_ELE_FRAC,             
+  ADER_MAT_ELE_ISO_ROW_ID,      
+  ADER_MAT_ELE_ISOS_PTR,         
+  ADER_MAT_ELE_MATRIX_DEL_COL_PTR,   
+  ADER_MAT_ELE_MATRIX_FUT_COL_PTR,   
+  ADER_MAT_ELE_Z,                
+  ADER_MAT_ELE_BLOCK_SIZE
+};
+      
+/*****************************************************************************/
+
+/***** ADER Material Element Isotope Entry Data ******************************/
+
+enum block_ADER_MAT_ELE_ISO {
+  ADER_MAT_ELE_ISO_ADER_MAT_ISO_PTR = LIST_DATA_SIZE,  
+  ADER_MAT_ELE_ISO_FRAC,         
+  ADER_MAT_ELE_ISO_BLOCK_SIZE 
+};
+ 
+/*****************************************************************************/
+
+/***** ADER Material Group Burn Steps Data ***********************************/
+
+enum block_ADER_MAT_GRP_BURN_STEP {
+  ADER_MAT_GRP_BURN_STEP_VALUE = LIST_DATA_SIZE, 
+  ADER_MAT_GRP_BURN_STEP_BLOCK_SIZE 
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Group Element Data **************************************/
+
+enum block_ADER_MAT_GRP_ELE {
+  ADER_MAT_GRP_ELE_FRAC = LIST_DATA_SIZE,        
+  ADER_MAT_GRP_ELE_Z,           
+  ADER_MAT_GRP_ELE_ISO_FIXED,  
+  ADER_MAT_GRP_ELE_ISOS_PTR,    
+  ADER_MAT_GRP_ELE_BLOCK_SIZE  
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Group Element Isos Data *********************************/
+
+enum block_ADER_MAT_GRP_ELE_ISO {
+  ADER_MAT_GRP_ELE_ISO_PTR = LIST_DATA_SIZE,        
+  ADER_MAT_GRP_ELE_ISO_BLOCK_SIZE  
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Group Isotope Data **************************************/
+
+enum block_ADER_MAT_GRP_ISO {
+  ADER_MAT_GRP_ISO_ELE_FRAC = LIST_DATA_SIZE,   
+  ADER_MAT_GRP_ISO_FRAC,        
+  ADER_MAT_GRP_MAT_ADER_ISO_PTR, 
+  ADER_MAT_GRP_ISO_ZAI,         
+  ADER_MAT_GRP_ISO_BLOCK_SIZE 
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Group Burn Step Amount Material Moved Data **************/
+
+enum block_ADER_MAT_GRP_STEP {
+  ADER_MAT_GRP_STEP_ATOMS = LIST_DATA_SIZE,      
+  ADER_MAT_GRP_STEP_MASS,       
+  ADER_MAT_GRP_STEP_PTR,       
+  ADER_MAT_GRP_SUB_STEP_PTR,    
+  ADER_MAT_GRP_STEP_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Group Burn Sub Step Amount Material Moved Data **********/
+
+enum block_ADER_MAT_GRP_SUB_STEP {
+  ADER_MAT_GRP_SUB_STEP_ATOMS = LIST_DATA_SIZE, 
+  ADER_MAT_GRP_SUB_STEP_MASS,   
+  ADER_MAT_GRP_SUB_STEP_NUM,   
+  ADER_MAT_GRP_SUB_STEP_BLOCK_SIZE 
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Group Sub Groups Data ***********************************/
+
+enum block_ADER_MAT_GRP_SUM_GRP {
+  ADER_MAT_GRP_SUM_GRP_ID = LIST_DATA_SIZE,      
+  ADER_MAT_GRP_SUM_GRP_PTR,    
+  ADER_MAT_GRP_SUM_GRP_WEIGHT,  
+  ADER_MAT_GRP_SUM_GRP_BLOCK_SIZE 
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Isotope Data ********************************************/
+
+enum block_ADER_MAT_ISO {
+  ADER_MAT_ISO_ABS_MIC_XS_AVG = LIST_DATA_SIZE,       
+  ADER_MAT_ISO_ABS_MIC_XS_CUR,       
+  ADER_MAT_ISO_ABS_MIC_XS_BOS,      
+  ADER_MAT_ISO_ABS_MIC_XS_EOS,       
+  ADER_MAT_ISO_ABS_MIC_XS_PS1,    
+  ADER_MAT_ISO_BAL_ROW_ID,          
+  ADER_MAT_ISO_BURN_INDEX,          
+  ADER_MAT_ISO_CONTROL_FLAG,       
+  ADER_MAT_ISO_DEL_COL_ID,         
+  ADER_MAT_ISO_DEL_ROW_ID,         
+  ADER_MAT_ISO_FUT_COL_ID,          
+  ADER_MAT_ISO_FUT_ROW_ID,        
+  ADER_MAT_ISO_MATRIX_DEL_COL_PTR, 
+  ADER_MAT_ISO_MATRIX_FUT_COL_PTR,   
+  ADER_MAT_ISO_NUBAR_FIS_MIC_XS_AVG, 
+  ADER_MAT_ISO_NUBAR_FIS_MIC_XS_CUR,
+  ADER_MAT_ISO_NUBAR_FIS_MIC_XS_BOS, 
+  ADER_MAT_ISO_NUBAR_FIS_MIC_XS_EOS, 
+  ADER_MAT_ISO_NUBAR_FIS_MIC_XS_PS1, 
+  ADER_MAT_ISO_PTR,                 
+  ADER_MAT_ISO_FIS_MIC_XS_AVG,       
+  ADER_MAT_ISO_FIS_MIC_XS_CUR,      
+  ADER_MAT_ISO_FIS_MIC_XS_BOS,      
+  ADER_MAT_ISO_FIS_MIC_XS_EOS,      
+  ADER_MAT_ISO_FIS_MIC_XS_PS1,       
+  ADER_MAT_ISOS_BLOCK_SIZE          
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Optimization Matrix Data ********************************/
+
+enum block_ADER_MAT_MATRIX {
+  ADER_MAT_MATRIX_COLS_PTR = LIST_DATA_SIZE,                   
+  ADER_MAT_MATRIX_CPL_STARTS_C_POINTER,        
+  ADER_MAT_MATRIX_CPL_INDEX_C_POINTER,     
+  ADER_MAT_MATRIX_CPL_ELES_C_POINTER,        
+  ADER_MAT_MATRIX_NUM_COLS,                 
+  ADER_MAT_MATRIX_NUM_ROWS,                   
+  ADER_MAT_MATRIX_ROW_BOUNDS_PTR,           
+  ADER_MAT_MATRIX_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Optimization Matrix Column Data *************************/
+
+enum block_ADER_MAT_MATRIX_COL {
+  ADER_MAT_MATRIX_COL_LOWER_BOUND = LIST_DATA_SIZE,           
+  ADER_MAT_MATRIX_COL_ROWS_PTR,              
+  ADER_MAT_MATRIX_COL_UPPER_BOUND,          
+  ADER_MAT_MATRIX_COL_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Optimization Matrix Row Entries *************************/
+
+enum block_ADER_MAT_MATRIX_COL_ROW {
+  ADER_MAT_MATRIX_COL_ROW_ENTRY = LIST_DATA_SIZE,              
+  ADER_MAT_MATRIX_COL_ROW_BLOCK_SIZE 
+};
+         
+/*****************************************************************************/
+
+/***** ADER Material Optimization Matrix Row Bounds **************************/
+
+enum block_ADER_MAT_MATRIX_ROW_BOUNDS {
+  ADER_MAT_MATRIX_ROW_LOWER_BOUND = LIST_DATA_SIZE,            
+  ADER_MAT_MATRIX_ROW_UPPER_BOUND,             
+  ADER_MAT_MATRIX_ROW_BOUNDS_BLOCK_SIZE 
+};
+      
+/*****************************************************************************/
+
+/***** ADER Material Composition Optimization Data ***************************/
+
+enum block_ADER_MAT_OPT {
+  ADER_MAT_OPT_DIR = LIST_DATA_SIZE,            
+  ADER_MAT_OPT_TYPE,           
+  ADER_MAT_OPT_TYPE_TARGET,     
+  ADER_MAT_OPT_BLOCK_SIZE    
+};
+/*****************************************************************************/
+
+/***** ADER Material Oxidation Data ******************************************/
+
+enum block_ADER_MAT_OXI {
+  ADER_MAT_OXI_MAX = LIST_DATA_SIZE,           
+  ADER_MAT_OXI_MIN,             
+  ADER_MAT_OXI_ROW_ID,          
+  ADER_MAT_OXI_TBL_PTR,       
+  ADER_MAT_OXI_BLOCK_SIZE   
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Preserve Data *******************************************/
+
+enum block_ADER_MAT_PRESERVE {
+  ADER_MAT_PRESERVE_ENT = LIST_DATA_SIZE,       
+  ADER_MAT_PRESERVE_ROW_ID,    
+  ADER_MAT_PRESERVE_BLOCK_SIZE 
+};
+
+/*****************************************************************************/
+
+/***** ADER Material Streams Group Data **************************************/
+
+
+enum block_ADER_MAT_STREAM {
+  ADER_MAT_STREAM_ADJ_AMT = LIST_DATA_SIZE,      
+  ADER_MAT_STREAM_BURN_INDEX,   
+  ADER_MAT_STREAM_BURN_STEPS_PTR,	
+  ADER_MAT_STREAM_COL_ID,     
+  ADER_MAT_STREAM_CUR_AMT,      
+  ADER_MAT_STREAM_DEST,        
+  ADER_MAT_STREAM_ELES_PTR,   
+  ADER_MAT_STREAM_FORM,         
+  ADER_MAT_STREAM_ID,           
+  ADER_MAT_STREAM_INTVS_PTR,    
+  ADER_MAT_STREAM_ISOS_PTR,     
+  ADER_MAT_STREAM_MAT_PTR,      
+  ADER_MAT_STREAM_PTR,         
+  ADER_MAT_STREAM_SHADOW_PTR,  
+  ADER_MAT_STREAM_SRC,         
+  ADER_MAT_STREAM_STEPS_PTR,   
+  ADER_MAT_STREAM_SUM_GRPS_PTR, 
+  ADER_MAT_STREAM_SUM_GRPS_ROW_ID,
+  ADER_MAT_STREAM_TOTAL,       
+  ADER_MAT_STREAM_TYPE,       
+  ADER_MAT_STREAM_BLOCK_SIZE     
+};
+
+/*****************************************************************************/
+
+/* ADER MOD END */
+}
+
+locations.h: Ln 5235
+{
+/* ADER MOD BEGIN */
+
+/******* ADER System Wide Data ***********************************************/
+
+enum block_ADER {
+  ADER_CLUSTERS_PTR = LIST_DATA_SIZE,
+  ADER_CONTROL_PTR,
+  ADER_CONDITIONS_PTR,
+  ADER_GROUPS_PTR,
+  ADER_OXIS_PTR,
+  ADER_REPROS_PTR,
+  ADER_STREAMS_PTR,
+  ADER_K_MAX,
+  ADER_K_MIN,
+  ADER_K_LEAKAGE,
+  ADER_NEG_ADENS_OPT,
+  ADER_TEST_INFO_PTR,
+  ADER_TRANS_ITER,
+  ADER_TRANS_ITER_NUM,
+  ADER_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Cluster Entry ****************************************************/
+
+enum block_ADER_CLUSTER {
+  ADER_CLUSTER_ENT_PTR = LIST_DATA_SIZE,
+  ADER_CLUSTER_PARENT_ID,
+  ADER_CLUSTER_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Cluster Member Entry *********************************************/
+
+enum block_ADER_CLUSTER_ENT {
+  ADER_CLUSTER_ENT_ID = LIST_DATA_SIZE,
+  ADER_CLUSTER_ENT_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Conditions Data **************************************************/
+
+enum block_ADER_CND {
+  ADER_CND_CNT_PTR = LIST_DATA_SIZE + PARAM_N_COMMON,
+  ADER_CND_ID,
+  ADER_CND_OPT_PTR,
+  ADER_CND_OXI_PTR,
+  ADER_CND_PRES_PTR,
+  ADER_CND_RNGS_PTR,
+  ADER_CND_RTOS_PTR,
+  ADER_CND_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Conditions Controlled Items Tags *********************************/
+
+enum block_ADER_CND_CNT {
+  ADER_CND_CNT_ID = LIST_DATA_SIZE,
+  ADER_CND_CNT_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Conditions Preservation Entry ************************************/
+
+enum block_ADER_CND_PRES {
+  ADER_CND_PRES_ENT = LIST_DATA_SIZE,
+  ADER_CND_PRES_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Conditions Oxidation Tags ****************************************/
+
+enum block_ADER_CND_OPT {
+  ADER_CND_OPT_DIR = LIST_DATA_SIZE,
+  ADER_CND_OPT_TYPE,
+  ADER_CND_OPT_TYPE_TARGET,
+  ADER_CND_OPT_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Conditions Oxidation Tags ****************************************/
+
+enum block_ADER_CND_OXI {
+  ADER_CND_OXI_ID = LIST_DATA_SIZE,
+  ADER_CND_OXI_MAX,
+  ADER_CND_OXI_MIN,
+  ADER_CND_OXI_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Conditions Range Data ********************************************/
+
+enum block_ADER_CND_RNG {
+  ADER_CND_RNG_GRP_ID = LIST_DATA_SIZE,
+  ADER_CND_RNG_MAX,
+  ADER_CND_RNG_MIN,
+  ADER_CND_RNG_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Conditions Ratio Data ********************************************/
+
+enum block_ADER_CND_RTO {
+  ADER_CND_RTO_GRP1_ID = LIST_DATA_SIZE,
+  ADER_CND_RTO_GRP2_ID,
+  ADER_CND_RTO_MAX,
+  ADER_CND_RTO_MIN,
+  ADER_CND_RTO_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Controlled Item Table Data ***************************************/
+
+enum block_ADER_CONTROL {
+  ADER_CONTROL_ENT_PTR = LIST_DATA_SIZE + PARAM_N_COMMON,
+  ADER_CONTROL_TBL_ID,
+  ADER_CONTROL_TBL_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Controlled Item Table Entry **************************************/
+
+enum block_ADER_CONTROL_ENT {
+  ADER_CONTROL_ENT_Z = LIST_DATA_SIZE,
+  ADER_CONTROL_ENT_ZAI,
+  ADER_CONTROL_ENT_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Group Data *******************************************************/
+
+enum block_ADER_GRP {
+  ADER_GRP_COMP_PTR = LIST_DATA_SIZE + PARAM_N_COMMON,
+  ADER_GRP_ID,
+  ADER_GRP_SUM_GRPS_PTR,
+  ADER_GRP_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Group Composition Data *******************************************/
+
+enum block_ADER_GRP_COMP {
+  ADER_GRP_COMP_FRAC = LIST_DATA_SIZE,
+  ADER_GRP_COMP_ISOS_PTR,
+  ADER_GRP_COMP_Z,
+  ADER_GRP_COMP_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Group Isotopic Composition Data **********************************/
+
+enum block_ADER_GRP_ISO {
+  ADER_GRP_ISO_FRAC = LIST_DATA_SIZE,
+  ADER_GRP_ISO_ZAI,
+  ADER_GRP_ISO_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Summation Group Data *********************************************/
+
+enum block_ADER_GRP_SUM_GRP {
+  ADER_GRP_SUM_GRP_ID = LIST_DATA_SIZE,
+  ADER_GRP_SUM_GRP_PTR,
+  ADER_GRP_SUM_GRP_WEIGHT,
+  ADER_GRP_SUM_GRP_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Oxidation Table Data *********************************************/
+
+enum block_ADER_OXI {
+  ADER_OXI_ELES_PTR = LIST_DATA_SIZE + PARAM_N_COMMON,
+  ADER_OXI_TBL_ID,
+  ADER_OXI_TBL_BLOCK_SIZE
+};
+ 
+/*****************************************************************************/
+
+/***** ADER Oxidation Table Entry ********************************************/
+
+enum block_ADER_OXI_ELE {
+  ADER_OXI_ELE_VAL = LIST_DATA_SIZE,
+  ADER_OXI_ELE_WEIGHT,
+  ADER_OXI_ELE_Z,
+  ADER_OXI_ELE_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Reprocessing Table Data ******************************************/
+
+enum block_ADER_REPRO {
+  ADER_REPRO_ENT_PTR = LIST_DATA_SIZE + PARAM_N_COMMON,
+  ADER_REPRO_TBL_ID,
+  ADER_REPRO_TBL_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Reprocessing Table Entry *****************************************/
+
+enum block_ADER_REPRO_ENT {
+  ADER_REPRO_ENT_VAL = LIST_DATA_SIZE,
+  ADER_REPRO_ENT_Z,
+  ADER_REPRO_ENT_ZAI,
+  ADER_REPRO_ENT_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Streams Data *****************************************************/
+
+enum block_ADER_STREAM {
+  ADER_STREAM_DEST = LIST_DATA_SIZE,
+  ADER_STREAM_FORM,
+  ADER_STREAM_GRP_ID,
+  ADER_STREAM_GRP_TYPE,
+  ADER_STREAM_OPT1,
+  ADER_STREAM_OPT2,
+  ADER_STREAM_SRC,
+  ADER_STREAM_TYPE,
+  ADER_STREAM_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/***** ADER Test Info Data ***************************************************/
+
+enum block_ADER_TEST {
+  ADER_TEST_NUM_CASES = LIST_DATA_SIZE,
+  ADER_TEST_NUM_PASSED,
+  ADER_TEST_NUM_FAILED,
+  ADER_TEST_INFO_BLOCK_SIZE
+};
+
+/*****************************************************************************/
+
+/* ADER MOD END */
+}
+
+Main: Ln 294
+{
+	  /* ADER MOD BEGIN */
+
+	  ADERProcessAderMainData();
+
+	  /* ADER MOD END */
+}
+
+Main: Ln 694
+{
+      /* ADER MOD BEGIN */
+
+#ifdef ADER_TEST
+
+      RunTests();
+
+#endif
+
+      /* ADER MOD END */
+}
+
+MaterialBurnup: Ln 95
+{
+          /* ADER MOD BEGIN */
+
+          /* ADER materials can not use the NUCLIDE_PTR_MATRIX_IDX tag to     */
+          /* store isotope burn matrix indices because of the material        */
+          /* clusters and input and output streams. As such, a special        */
+          /* function call is needed to retrieve the isotopic index           */
+
+          if((long)RDB[mat + MATERIAL_ADER_DATA] > VALID_PTR)
+          {
+
+        	  i = ADERGetIsoBurnMatrixIndex(FUNCTION_NAME, mat, nuc);
+
+          }
+          else
+          {
+
+        	  /* Original SERPENT code, modified for style                    */
+
+              if((i = TestValuePair(nuc + NUCLIDE_PTR_MATRIX_IDX, mat, id)) < 0)
+              {
+
+                  Die(FUNCTION_NAME, "i < 0");
+
+              }
+
+          }
+
+          /* ADER MOD END */
+}
+
+MaterialBurnup: Ln 164
+{          /* Get index to composition vector */
+          
+          /* ADER MOD BEGIN */
+
+          /* ADER materials can not use the NUCLIDE_PTR_MATRIX_IDX tag to     */
+          /* store isotope burn matrix indices because of the material        */
+          /* clusters and input and output streams. As such, a special        */
+          /* function call is needed to retrieve the isotopic index           */
+
+          if((long)RDB[mat + MATERIAL_ADER_DATA] > VALID_PTR)
+          {
+
+        	  i = ADERGetIsoBurnMatrixIndex(FUNCTION_NAME, mat, nuc);
+
+          }
+          else
+          {
+
+        	  /* Original SERPENT code, modified for style                    */
+
+              if((i = TestValuePair(nuc + NUCLIDE_PTR_MATRIX_IDX, mat, id)) < 0)
+              {
+
+                  Die(FUNCTION_NAME, "i < 0");
+
+              }
+
+          }
+
+          /* ADER MOD END */
+}
+
+NormalizeCompositions: Ln 100
+{
+	      /* ADER MOD BEGIN */
+
+	      /* If the value is only slightly negative, fix this                 */
+
+	      if((long)RDB[mat + MATERIAL_ADER_DATA] > VALID_PTR)
+	      {
+
+	    	  if(f < 0.0)
+	    	  {
+
+	    		  WDB[iso + COMPOSITION_ADENS] = 0.0;
+
+	    		  f = 0.0;
+
+	    	  }
+
+	      }
+
+	      /* ADER MOD END */
+}
+
+ParseCommandLine: Insert after line 268 (contents '        }')
+{
+      /* ADER MOD BEGIN */
+
+      /* Check to see if running unit-like tests */
+
+      else if(!strcmp(argv[n], "-test"))
+      {
+
+          WDB[DATA_TEST_MODE] = (double)YES;
+
+          NewItem((long)RDB[DATA_PTR_ADER] + ADER_TEST_INFO_PTR,
+                  ADER_TEST_INFO_BLOCK_SIZE);
+
+      }
+
+      /* ADER MOD END */
+}
+
+PrintCycleOutput: Ln 228
+{
+	  /* ADER MOD BEGIN */
+
+	  if(RDB[DATA_PTR_ADER] > VALID_PTR)
+	  {
+
+		  if((long)RDB[(long)RDB[DATA_PTR_ADER] + ADER_TRANS_ITER_NUM] >= 0.0)
+		  {
+
+			    fprintf(outp, "                       ADER Iteration = %ld\n",
+			    		(long)RDB[(long)RDB[DATA_PTR_ADER] + ADER_TRANS_ITER_NUM]);
+
+		  }
+		  else
+		  {
+
+			    fprintf(outp, "                       ADER Iteration = --");
+
+		  }
+
+	  }
+
+	  /* ADER MOD END */
+}
+
+PrintDepMatrix: Ln 76
+{
+      /* ADER MOD BEGIN */
+
+      if((long)RDB[mat + MATERIAL_ADER_DATA] > VALID_PTR)
+      {
+
+    	  i = ADERGetIsoBurnMatrixIndex(FUNCTION_NAME, mat, nuc);
+
+      }
+      else
+      {
+
+    	  /* Original SERPENT code                                            */
+
+          i = TestValuePair(nuc + NUCLIDE_PTR_MATRIX_IDX, (double)mat, id);
+
+      }
+
+      /* ADER MOD END */
+}
+
+PrintDepMatrix: Ln 108
+{
+      /* ADER MOD BEGIN */
+
+      if((long)RDB[mat + MATERIAL_ADER_DATA] > VALID_PTR)
+      {
+
+    	  i = ADERGetIsoBurnMatrixIndex(FUNCTION_NAME, mat, nuc);
+
+      }
+      else
+      {
+
+    	  /* Original SERPENT code                                            */
+
+          i = TestValuePair(nuc + NUCLIDE_PTR_MATRIX_IDX, (double)mat, id);
+
+      }
+
+      /* ADER MOD END */
+}
+
+PrintDepOutput: Ln 30
+{
+  /* ADER MOD BEGIN */
+
+  char* mat_name;
+  long mat;
+
+  /* ADER MOD END */
+}
+
+PrintDepOutput: Ln 350
+{
+  /* ADER MOD BEGIN */
+
+  /* Print data for ADER materials which were not burn materials              */
+
+  mat = (long)RDB[DATA_PTR_M0];
+
+  while(mat > VALID_PTR)
+  {
+
+	  mat_name = GetText(mat + MATERIAL_PTR_NAME);
+
+	  ADERPrintOutput(0, fo, mat_name);
+
+	  mat = NextItem(mat);
+
+  }
+
+  /* ADER MOD END */
+}
+
+PrintDepVals: Ln 379
+{
+  /* ADER MOD BEGIN */
+
+  fprintf(fp, "];\n\n");
+
+
+  /***************************************************************************/
+
+  /******************** Print out the ADER data ******************************/
+
+  if(mat != NULL)
+  {
+
+	  if(strlen(mat) != 0)
+	  {
+
+		  ADERPrintOutput(1, fp, mat);
+
+	  }
+
+  }
+
+  /* ADER MOD END */
+}
+
+ProcessMaterials: Ln 205
+{
+  /* ADER MOD BEGIN */
+
+  /* Sets up Material Ader data */
+
+  ADERProcessMaterialAderData();
+
+  /* ADER MOD END */
+}
+
+ReadInput: Ln 15
+{
+/* ADER MOD BEGIN */
+#include "element_data.h"
+/* ADER MOD END */
+}
+
+ReadInput: Insert after line 419 (contents '        }')
+{
+	      /* ADER MOD BEGIN */
+
+          else if (!strcmp(params[j], "ader"))
+        {
+          /***** ADER: ADER flag. *************************************/
+
+          /* NOTE: This is for testing only */
+
+          j++;
+
+          /* Create ADER Memory */
+          ADERSetMatAderMem(loc0, params, np, pname, fname, line);
+
+          /***********************************************************/
+        }
+          else if (!strcmp(params[j], "rhow"))
+        {
+          /***** ADER: Material reactivity weight ********************/
+
+          /* We skip over this parameter because it was handled inside */
+          /* ADERSetMatAderMem(). */
+          j++;
+          /* We also skip over its value */
+          j++;
+
+        }
+          else if (!strcmp(params[j], "cnd"))
+        {
+          /***** ADER: Material reactivity weight ********************/
+
+          /* We skip over this parameter because it was handled inside */
+          /* ADERSetMatAderMem(). */
+          j++;
+          /* We also skip over its value */
+          j++;
+
+        }
+
+	      /* ADER MOD END */
+}
+
+ReadInput: Insert after line 15252 (contents '        }')
+{
+      /* ADER MOD BEGIN */
+
+  else if (!strcasecmp(params[j], "ader_trans_iter"))
+      {
+        /***** ADER Transport Calculation Iteration Number *******/
+
+        /* Copy parameter name */
+
+        strcpy (pname, params[j]);
+
+        k = j + 1;
+
+        k = ADERReadAderTransIterData(fname, line, params, pname, np, k);
+
+        if (k < np)
+      {
+        Error(0, "Improper set command for 'ader_trans_iter' on line %ld in \n \
+file %s. A single integer greater than 0 should follow this keyword.\n", line,
+              fname);
+      }
+      }
+  else if (!strcasecmp(params[j], "ader_neg_adens"))
+      {
+        /***** ADER Negative Isotopic Density Handling Tag *******/
+
+        /* Copy parameter name */
+
+        strcpy (pname, params[j]);
+
+        /* This sets k = np which it should be. The number after the set      */
+        /*ader_dens_corr is unimportant                                       */
+
+        k = j + 2;
+
+        ADERReadAderNegAdens(fname, line, params, pname, np);
+
+      }
+
+        /* ADER MOD END */
+}
+
+ReadInput: Ln 15803
+{
+      /* ADER MOD BEGIN */
+
+      else if (!strcasecmp(word, "conditions"))
+                {
+                  /* ADER Conditions Input Read Section */
+
+                  /* Copy parameter name */
+
+                  strcpy (pname, word);
+
+                  /* Read parameters */
+
+                  params = GetParams(word, input, &np, &i0, 3,
+                                     1E+08, fname);
+
+                  /* Get memory size */
+
+                  mem = RDB[DATA_TOTAL_BYTES];
+
+                  /* Call conditions creation routine. */
+
+                  ADERCreateAderCndEntry(fname, line, params, pname, np, word);
+                }
+            else if (!strcasecmp(word, "control"))
+                {
+                  /* ADER Control Input Read Section */
+
+                  /* Copy parameter name */
+
+                  strcpy (pname, word);
+
+                  /* Read parameters */
+
+                  params = GetParams(word, input, &np, &i0, 2,
+                                     2*MAX_ISOTOPES + 2*NUMBER_OF_ELEMENTS + 1,
+                                     fname);
+
+                  /* Get memory size */
+
+                  mem = RDB[DATA_TOTAL_BYTES];
+
+                  /* Call control table creation routine. */
+
+                  ADERCreateAderControlEntry(fname, line, params, pname, np, word);
+                }
+            else if (!strcasecmp(word, "grp"))
+                {
+                  /* ADER Group Input Read Section */
+
+                  /* Copy parameter name */
+
+                  strcpy (pname, word);
+
+                  /* Read parameters */
+
+                  params = GetParams(word, input, &np, &i0, 2,
+                                     2*MAX_ISOTOPES + 4*NUMBER_OF_ELEMENTS + 1,
+                                     fname);
+
+                  /* Get memory size */
+
+                  mem = RDB[DATA_TOTAL_BYTES];
+
+                  /* Call group creation routine. */
+
+                  ADERCreateAderGroupEntry(fname, line, params, pname, np, word);
+                }
+            else if (!strcasecmp(word, "kmax"))
+                {
+                  /* ADER kMax Input Read Section */
+
+                  /* Copy parameter name */
+
+                  strcpy (pname, word);
+
+                  /* Read parameters */
+
+                  params = GetParams(word, input, &np, &i0, 1, 1, fname);
+
+                  /* Get memory size */
+
+                  mem = RDB[DATA_TOTAL_BYTES];
+
+                  /* Call kmax storage routine. */
+
+                  ADERReadAderKMaxData(fname, line, params, pname, np);
+                }
+            else if (!strcasecmp(word, "kmin"))
+                {
+                  /* ADER kMin Input Read Section */
+
+                  /* Copy parameter name */
+
+                  strcpy (pname, word);
+
+                  /* Read parameters */
+
+                  params = GetParams(word, input, &np, &i0, 1, 1, fname);
+
+                  /* Get memory size */
+
+                  mem = RDB[DATA_TOTAL_BYTES];
+
+                  /* Call kmin storage routine. */
+
+                  ADERReadAderKMinData(fname, line, params, pname, np);
+                }
+            else if (!strcasecmp(word, "removal"))
+                {
+                  /* ADER Removal Input Read Section */
+
+                  /* Copy parameter name */
+
+                  strcpy (pname, word);
+
+                  /* Read parameters */
+
+                  params = GetParams(word, input, &np, &i0, 3,
+                                     2*MAX_ISOTOPES + 2 * NUMBER_OF_ELEMENTS + 1,
+                                     fname);
+
+                  /* Get memory size */
+
+                  mem = RDB[DATA_TOTAL_BYTES];
+
+                  /* Call removal table creation routine. */
+
+                  ADERCreateAderRemovalEntry(fname, line, params, pname, np, word);
+                }
+            else if (!strcasecmp(word, "stream"))
+                {
+                  /* ADER Stream Input Read Section */
+
+                  /* Copy parameter name */
+
+                  strcpy (pname, word);
+
+                  /* Read parameters */
+
+                  params = GetParams(word, input, &np, &i0, 8,
+                                     14, fname);
+
+                  /* Get memory size */
+
+                  mem = RDB[DATA_TOTAL_BYTES];
+
+                  /* Call stream creation routine. */
+
+                  ADERCreateAderStreamEntry(fname, line, params, pname, np);
+                }
+            else if (!strcasecmp(word, "oxidation"))
+                {
+                  /* ADER Oxidation Input Read Section */
+
+                  /* Copy parameter name */
+
+                  strcpy (pname, word);
+
+                  /* Read parameters */
+
+                  params = GetParams(word, input, &np, &i0, 3,
+                                     4*NUMBER_OF_ELEMENTS + 1, fname);
+
+                  /* Get memory size */
+
+                  mem = RDB[DATA_TOTAL_BYTES];
+
+                  /* Call oxidation table creation routine. */
+
+                  ADERCreateAderOxidationEntry(fname, line, params, pname, np, word);
+                }
+            else
+            {
+                Error(0, "Input word, %s, on line %ld in file %s is not a valid input word.\n",
+                      word, line, fname);
+            }
+
+      /* ADER MOD END */
+}
+
+StoreTransmuXS: Ln 32 - 33
+{
+/* ADER MOD BEGIN */
+void StoreTransmuXS(long mat, long step, long type, long id, long iter)
+{
+/* ADER MOD END */
+}
+
+StoreTransmuXS: Ln 51
+{
+  /* ADER MOD BEGIN */
+
+  ADERMoveCrossSection(mat, step, iter);
+  
+  /* ADER MOD END */
+}
+
+StoreTransmuXS: Ln 93 - 96
+{
+      /* ADER MOD BEGIN */
+
+      if(step == 0)
+      {
+
+          WDB[mat + MATERIAL_BURN_FLUX_PS1] = -INFTY;
+
+      }
+      else
+      {
+
+          if(iter == 0)
+          {
+
+              WDB[mat + MATERIAL_BURN_FLUX_PS1] = RDB[mat + MATERIAL_BURN_FLUX_BOS];
+
+          }
+
+      }
+      /* ADER MOD END */
+}
+
+StoreTransmuXS: Insert after line 132 (contents '    WDB[mat + MATERIAL_BURN_FLUX_AVE] = new_ave_flux;')
+{
+      /* ADER MOD BEGIN */
+
+      if((long)RDB[DATA_BURN_SIE] == YES)
+      {
+
+          ADERCopyMaterialFlux(flx, new_ave_flux, old_ave_flux, mat);
+
+      }
+
+      /* ADER MOD END */
+}
+
+StoreTransmuXS: Ln 172 - 175
+{
+          /* ADER MOD BEGIN */
+          if(step == 0)
+          {
+
+              WDB[dep + DEP_TRA_PS1] = -INFTY;
+
+          }
+          else
+          {
+
+              if(iter == 0)
+              {
+
+                  WDB[dep + DEP_TRA_PS1] = RDB[dep + DEP_TRA_BOS];
+
+              }
+
+          }
+          /* ADER MOD END */
+}
+
+StoreTransmuXS: Ln 293 - 296
+{
+          /* ADER MOD BEGIN */
+          if(step == 0)
+          {
+
+              WDB[dep + DEP_TRA_PS1] = -INFTY;
+
+          }
+          else
+          {
+
+              if(iter == 0)
+              {
+
+                  WDB[dep + DEP_TRA_PS1] = RDB[dep + DEP_TRA_BOS];
+
+              }
+
+          }
+          /* ADER MOD END */
+}
+
+UpdateCIStope: Ln 49 - 51
+{
+      /* ADER MOD BEGIN */
+
+      if((long)RDB[mat + MATERIAL_ADER_DATA] > VALID_PTR)
+      {
+
+    	  i = ADERGetIsoBurnMatrixIndex(FUNCTION_NAME, mat, nuc);
+
+      }
+      else
+      {
+
+    	  /* Original SERPENT code, modified for style                    */
+
+          if((i = TestValuePair(nuc + NUCLIDE_PTR_MATRIX_IDX, mat, id)) < 0)
+          {
+
+              Die(FUNCTION_NAME, "i < 0");
+
+          }
+
+      }
+
+      /* ADER MOD END */
+}
+
+UpdateCIStop: Ln 83 - 87
+{
+      /* ADER MOD BEGIN */
+
+      if((long)RDB[mat + MATERIAL_ADER_DATA] > VALID_PTR)
+      {
+
+    	  i = ADERGetIsoBurnMatrixIndex(FUNCTION_NAME, mat, nuc);
+
+      }
+      else
+      {
+
+    	  /* Original SERPENT code, modified for style                    */
+
+          if((i = TestValuePair(nuc + NUCLIDE_PTR_MATRIX_IDX, mat, id)) < 0)
+          {
+
+              Die(FUNCTION_NAME, "i < 0");
+
+          }
+
+      }
+
+      /* ADER MOD END */
+}
+
+
+

@@ -1,0 +1,15 @@
+\textbf{Info}: Called from \texttt{BurnupCycle}. Called after an initial 
+transport sweep executed by \texttt{TransportCycle}. Orders the filling-in of
+the material composition matrices, their solution, and the incorporation of any
+instentaneous changes. Following the incorporation of such changes their
+effects on reactivity are assessed with a new transport sweep. After which, if
+the multiplication factor of the system is within the user bounds or if the
+number of iterations have been exceeded, this function will exit.
+
+\noindent \textbf{Inputs}:
+\begin{itemize}
+\item{long dep}
+\item{long step}
+\end{itemize}
+
+\noindent \textbf{Returns}: void
